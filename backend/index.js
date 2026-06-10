@@ -5,20 +5,15 @@ const cors = require("cors");
 
 const prisma = require("./utils/prisma");
 
-const authRoutes =
-  require("./routes/authRoutes");
+// Routes
+const authRoutes = require("./routes/authRoutes");
+const resumeRoutes = require("./routes/resumeRoutes");
+const analysisRoutes = require("./routes/analysisRoutes");
+const atsRoutes = require("./routes/atsRoutes");
+const careerRoutes = require("./routes/careerRoutes");
 
-const resumeRoutes =
-  require("./routes/resumeRoutes");
-
-const analysisRoutes =
-  require("./routes/analysisRoutes");
-
-const atsRoutes =
-  require("./routes/atsRoutes");
-
-const jobMatchRoutes =
-  require("./routes/jobMatchRoutes");
+// ✅ PHASE 7 - PDF REPORT ROUTE ADDED
+const pdfRoutes = require("./routes/pdfRoutes");
 
 const app = express();
 
@@ -38,60 +33,30 @@ connectDB();
 
 // Middleware
 app.use(cors());
-
 app.use(express.json());
-
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
+app.use(express.urlencoded({ extended: true }));
 
 // Static Upload Folder
-app.use(
-  "/uploads",
-  express.static("uploads")
-);
+app.use("/uploads", express.static("uploads"));
 
 // Routes
-app.use(
-  "/api/auth",
-  authRoutes
-);
+app.use("/api/auth", authRoutes);
+app.use("/api/resume", resumeRoutes);
+app.use("/api/analysis", analysisRoutes);
+app.use("/api/ats", atsRoutes);
+app.use("/api/career", careerRoutes);
 
-app.use(
-  "/api/resume",
-  resumeRoutes
-);
-
-app.use(
-  "/api/analysis",
-  analysisRoutes
-);
-
-app.use(
-  "/api/ats",
-  atsRoutes
-);
-
-app.use(
-  "/api/job-match",
-  jobMatchRoutes
-);
+// ✅ PHASE 7 ROUTE REGISTERED HERE
+app.use("/api/report", pdfRoutes);
 
 // Home Route
 app.get("/", (req, res) => {
-  res.send(
-    "🚀 AI Resume Analyzer Backend Running"
-  );
+  res.send("🚀 AI Resume Analyzer Backend Running");
 });
 
 // Server
-const PORT =
-  process.env.PORT || 8000;
+const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
-  console.log(
-    `🚀 Server Running On Port ${PORT}`
-  );
+  console.log(`🚀 Server Running On Port ${PORT}`);
 });

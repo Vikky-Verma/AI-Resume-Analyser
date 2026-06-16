@@ -33,7 +33,10 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: [
+    "http://localhost:5173",
+    "https://ai-resume-analyser-chi-ten.vercel.app/", // ✅ add after Vercel deploys
+  ],
   credentials: true,
 }));
 app.use(express.json());

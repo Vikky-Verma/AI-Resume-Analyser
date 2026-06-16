@@ -1,39 +1,34 @@
 const multer = require("multer");
-const path = require("path");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const storage = multer.diskStorage({
-  destination: function(req,res,cb){
-    cb(null,"uploads/");
-  },
-
-  filename: function(req,file,cb){
-    const uniqueName =
-      Date.now() +
-      path.extname(file.originalname);
-
-    cb(null,uniqueName);
-  }
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const fileFilter = (req,file,cb) => {
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "resumes",
+    allowed_formats: ["pdf", "docx"],
+    resource_type: "raw",
+  },
+});
 
-  const allowed =
-    [
-      "application/pdf",
-
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ];
-
-  if(allowed.includes(file.mimetype)){
-    cb(null,true);
-  }else{
+const fileFilter = (req, file, cb) => {
+  const allowed = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+  if (allowed.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
     cb(new Error("Only PDF/DOCX Allowed"));
   }
 };
 
-const upload = multer({
-  storage,
-  fileFilter
-});
+const upload = multer({ storage, fileFilter });
 
 module.exports = upload;

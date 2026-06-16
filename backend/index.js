@@ -35,9 +35,11 @@ connectDB();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://ai-resume-analyser-chi-ten.vercel.app/", // ✅ add after Vercel deploys
+    "https://ai-resume-analyser-chi-ten.vercel.app", // ✅ no trailing slash
   ],
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,10 +1,9 @@
-const Groq = require("groq-sdk");
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+const { aiComplete } = require("../utils/geminiClient");
 
 const analyzeResume = async (resumeText) => {
+  const systemPrompt =
+    "You are a strict ATS scoring machine that works across ALL professional domains. You score resumes objectively and harshly based on domain-specific standards. You output ONLY valid JSON. Never inflate scores. Never add markdown or explanation.";
+
   const prompt = `
 You are the world's most strict and accurate ATS Resume Scoring Engine used by top recruiting firms across ALL industries — tech, electronics, medical, finance, law, management, civil engineering, marketing, education, and every other field.
 
@@ -67,60 +66,22 @@ STEP 3 — RESUME SCORE (0–100)
 Score across 6 dimensions based on detected domain standards:
 
 1. IMPACT & ACHIEVEMENTS (0–25 pts)
-   - Software: metrics like "reduced load time by 40%", users served
-   - Electronics: hardware specs, power efficiency, test coverage
-   - Medical: patient outcomes, procedures handled, research impact
-   - Management: revenue impact, team size, cost savings
-   - Marketing: campaign ROI, leads generated, conversion rates
-   - Finance: portfolio size, accuracy rates, compliance record
-   
 2. DOMAIN DEPTH & RELEVANCE (0–20 pts)
-   - Uses current, relevant tools/tech for their field
-   - Demonstrates real expertise, not just name-dropping
-
 3. STRUCTURE & READABILITY (0–15 pts)
-   - Standard sections present and clearly labeled
-   - Consistent formatting throughout
-
 4. COMPLETENESS (0–15 pts)
-   - All key sections present for their domain
-   - No thin or missing sections
-
 5. KEYWORD OPTIMIZATION (0–15 pts)
-   - Rich with domain-specific industry terms
-   - Role-specific tool names and terminology
-
 6. CAREER NARRATIVE (0–10 pts)
-   - Clear progression and positioning
-   - Coherent professional story
 
 ════════════════════════════════════════
 STEP 4 — DOMAIN-SPECIFIC MISSING SKILLS
 ════════════════════════════════════════
 Based on detected domain, list 6–8 HIGH-DEMAND missing skills for 2024–2025.
 
-Examples by domain:
-- Software: "AWS Lambda + API Gateway", "Docker + Kubernetes", "System Design"
-- Electronics: "RTOS (FreeRTOS/Zephyr)", "PCB Design (Altium/KiCad)", "CAN/LIN protocols"
-- Mechanical: "FEA using ANSYS", "GD&T", "SolidWorks Simulation"
-- Medical: "Clinical Documentation", "EMR/EHR Systems", "Research Methodology"
-- Finance: "Financial Modeling (DCF)", "Bloomberg Terminal", "IFRS/GAAP"
-- Management: "OKR Framework", "P&L Management", "Stakeholder Communication"
-- Marketing: "Google Analytics 4", "HubSpot CRM", "Performance Marketing"
-- Data Science: "MLOps", "Feature Engineering", "A/B Testing at Scale"
-- Civil: "AutoCAD Civil 3D", "BIM (Revit)", "STAAD.Pro"
-
 ════════════════════════════════════════
 STEP 5 — SUGGESTIONS
 ════════════════════════════════════════
-Give exactly 5 suggestions. Each MUST:
-- Reference a SPECIFIC section or bullet from THIS resume
-- Tell exactly what to change and HOW
-- Include example transformation where possible
-- Be domain-appropriate (not generic tech advice for a medical resume)
-
-BAD: "Add more metrics to your resume"
-GOOD: "Your bullet 'Managed ward patients' has zero metrics. Rewrite as: 'Managed care for 15+ patients per shift in a 30-bed ward, maintaining 98% medication compliance rate'"
+Give exactly 5 suggestions. Each MUST reference a SPECIFIC section or bullet
+from THIS resume with an example rewrite.
 
 ════════════════════════════════════════
 
@@ -146,24 +107,7 @@ Resume to analyze:
 ${resumeText}
 `;
 
-  const completion = await groq.chat.completions.create({
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are a strict ATS scoring machine that works across ALL professional domains. You score resumes objectively and harshly based on domain-specific standards. You output ONLY valid JSON. Never inflate scores. Never add markdown or explanation.",
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-    model: "llama-3.3-70b-versatile",
-    temperature: 0.1,
-    max_tokens: 2000,
-  });
-
-  return completion.choices[0].message.content;
+  return await aiComplete(prompt, systemPrompt);
 };
 
 module.exports = analyzeResume;

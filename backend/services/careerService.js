@@ -1,10 +1,9 @@
-const Groq = require("groq-sdk");
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+const { aiComplete } = require("../utils/geminiClient");
 
 const generateCareerAdvice = async (resumeText) => {
+  const systemPrompt =
+    "You are a career advisor for ALL professional domains, not just tech. You output ONLY valid JSON. No markdown. No explanation.";
+
   const prompt = `
 You are an expert career advisor who works across ALL professional domains —
 software, electronics, mechanical, civil, medical, finance, law, management,
@@ -35,42 +34,19 @@ Rules:
 - skillsAlreadyHave: extract REAL skills mentioned in resume only
 - skillsToLearn: domain-specific high-demand skills missing from resume
 - roadmap: 5 practical steps tailored to their domain career path
-  (NOT generic advice — e.g. for electronics engineer: "Get certified in Embedded C, 
-   contribute to open-source RTOS projects, build a PCB portfolio")
 - DO NOT default to IT/software roles if the resume is from another domain
-
-Examples of domain-specific roadmaps:
-- Electronics Engineer: certifications → PCB portfolio → RTOS projects → industry tools → internship/job
-- Medical: clinical rotations → research paper → specialization → hospital residency → board exams
-- Finance: CFA/CA pathway → Excel modeling → internship → Bloomberg proficiency → firm placement
-- Management MBA: leadership roles → case competitions → networking → consulting/operations
-- Civil: AutoCAD/Revit → site internship → government projects → PE license
 
 Resume:
 ${resumeText}
 `;
 
-  const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are a career advisor for ALL professional domains, not just tech. You output ONLY valid JSON. No markdown. No explanation.",
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-    temperature: 0.2,
-    max_tokens: 1500,
-  });
-
-  return response.choices[0].message.content;
+  return await aiComplete(prompt, systemPrompt);
 };
 
 const matchJobDescription = async (resumeText, jobDescription) => {
+  const systemPrompt =
+    "You are a recruiter for ALL professional industries. You output ONLY valid JSON. No markdown. No explanation.";
+
   const prompt = `
 You are an expert recruiter and career advisor who works across ALL industries.
 
@@ -96,7 +72,7 @@ Rules:
 - matchedSkills: only skills genuinely in both resume AND job description
 - missingSkills: skills the JD requires that are absent from resume
 - suggestions: domain-appropriate, reference actual resume content where possible
-- Works for ANY industry — tech, medical, finance, engineering, law, etc.
+- Works for ANY industry
 
 Resume:
 ${resumeText}
@@ -105,24 +81,7 @@ Job Description:
 ${jobDescription}
 `;
 
-  const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are a recruiter for ALL professional industries. You output ONLY valid JSON. No markdown. No explanation.",
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-    temperature: 0.2,
-    max_tokens: 1500,
-  });
-
-  return response.choices[0].message.content;
+  return await aiComplete(prompt, systemPrompt);
 };
 
 module.exports = { generateCareerAdvice, matchJobDescription };

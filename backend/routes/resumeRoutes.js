@@ -12,6 +12,7 @@ const {
   uploadResume,
   getMyResumes,
   parseResume,
+  deleteResume, // ✅ added
 } = require("../controllers/resumeController");
 
 // Upload Resume
@@ -29,10 +30,18 @@ router.get(
   getMyResumes
 );
 
+// Parse Resume
 router.post(
   "/parse/:resumeId",
   authenticate,
   parseResume
+);
+
+// ✅ Delete Resume
+router.delete(
+  "/:id",
+  authenticate,
+  deleteResume
 );
 
 module.exports = router;

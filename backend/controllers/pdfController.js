@@ -6,7 +6,6 @@ const downloadReport = async (req, res) => {
   try {
     const { resumeId } = req.params;
 
-    // 1. Fetch resume
     const resume = await prisma.resume.findUnique({
       where: { id: resumeId },
     });
@@ -19,17 +18,17 @@ const downloadReport = async (req, res) => {
       return res.status(400).json({ success: false, message: "Resume Not Parsed Yet" });
     }
 
-    // 2. Fetch analysis — your schema has ONE model for both analysis + ATS
+    // Fetch analysis from DB
     let analysisData = null;
     try {
       analysisData = await prisma.analysis.findUnique({
         where: { resumeId },
       });
     } catch (_) {
-      console.log("⚠️ No analysis data found — skipping");
+      console.log("No analysis found");
     }
 
-    // 3. Get career advice from AI
+    // Get career advice
     let career = null;
     try {
       const careerRaw = await getCareer(resume.extractedText);
@@ -39,34 +38,35 @@ const downloadReport = async (req, res) => {
         .trim();
       career = JSON.parse(careerCleaned);
     } catch (_) {
-      console.log("⚠️ Career advice failed — skipping");
+      console.log("Career advice failed");
     }
 
-    // 4. Build data object — map your Analysis model fields correctly
+    // Read job match from query params (sent from frontend)
+    const jobMatch = req.query.matchScore
+      ? {
+          matchScore:    Number(req.query.matchScore),
+          matchedSkills: JSON.parse(req.query.matchedSkills || "[]"),
+          missingSkills: JSON.parse(req.query.missingSkills || "[]"),
+          suggestions:   JSON.parse(req.query.suggestions   || "[]"),
+        }
+      : null;
+
     const pdfData = {
       analysis: analysisData
         ? {
-            overallScore: analysisData.score,
-            strengths: analysisData.skills,        // Json field from your schema
-            improvements: analysisData.suggestions, // Json field from your schema
+            score:         analysisData.score,
+            atsScore:      analysisData.atsScore,
+            skills:        analysisData.skills,
+            missingSkills: analysisData.missingSkills,
+            suggestions:   analysisData.suggestions,
           }
         : null,
-
-      ats: analysisData
-        ? {
-            atsScore: analysisData.atsScore,
-            matchedKeywords: analysisData.skills,       // reuse skills as matched
-            missingKeywords: analysisData.missingSkills, // Json field from your schema
-          }
-        : null,
-
-      career: career || null,
+      career:   career   || null,
+      jobMatch: jobMatch || null,
     };
 
-    // 5. Generate PDF buffer
     const pdfBuffer = await generateResumePDF(pdfData);
 
-    // 6. Send as downloadable file
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",

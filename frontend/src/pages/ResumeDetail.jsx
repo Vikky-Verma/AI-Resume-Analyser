@@ -6,14 +6,28 @@ import ScoreCard from "../components/ScoreCard";
 import SkillBadge from "../components/SkillBadge";
 import toast from "react-hot-toast";
 import {
-  Cpu, Target, Briefcase, Download,
-  Loader2, ChevronRight, Sparkles, ClipboardList,
+  Cpu,
+  Target,
+  Briefcase,
+  Download,
+  Loader2,
+  ChevronRight,
+  Sparkles,
+  ClipboardList,
 } from "lucide-react";
 
-const Section = ({ icon, title, iconBg = "bg-indigo-950", iconColor = "text-indigo-400", children }) => (
+const Section = ({
+  icon,
+  title,
+  iconBg = "bg-indigo-950",
+  iconColor = "text-indigo-400",
+  children,
+}) => (
   <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-6 mb-5">
     <div className="flex items-center gap-3 mb-5">
-      <div className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center`}>
+      <div
+        className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center`}
+      >
         <span className={iconColor}>{icon}</span>
       </div>
       <h3 className="text-white font-bold text-base">{title}</h3>
@@ -24,21 +38,26 @@ const Section = ({ icon, title, iconBg = "bg-indigo-950", iconColor = "text-indi
 
 const ResumeDetail = () => {
   const { resumeId } = useParams();
-  const [analysis, setAnalysis]   = useState(null);
-  const [career, setCareer]       = useState(null);
-  const [jobMatch, setJobMatch]   = useState(null);
-  const [jobDesc, setJobDesc]     = useState("");
+  const [analysis, setAnalysis] = useState(null);
+  const [career, setCareer] = useState(null);
+  const [jobMatch, setJobMatch] = useState(null);
+  const [jobDesc, setJobDesc] = useState("");
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
-  const [loadingCareer, setLoadingCareer]     = useState(false);
-  const [loadingMatch, setLoadingMatch]       = useState(false);
-  const [loadingReport, setLoadingReport]     = useState(false);
+  const [loadingCareer, setLoadingCareer] = useState(false);
+  const [loadingMatch, setLoadingMatch] = useState(false);
+  const [loadingReport, setLoadingReport] = useState(false);
 
   const parseAndAnalyze = async () => {
     setLoadingAnalysis(true);
     try {
-      try { await API.post(`/resume/parse/${resumeId}`); } catch (_) {}
-      const { data } = await API.get(`/analysis/${resumeId}`);
-      setAnalysis(data);
+      // Step 1: Parse resume
+      try {
+        await API.post(`/resume/parse/${resumeId}`);
+      } catch (_) {}
+
+      // Step 2: POST to analysis + get data.analysis ✅
+      const { data } = await API.post(`/analysis/${resumeId}`);
+      setAnalysis(data.analysis);
       toast.success("Analysis complete!");
     } catch {
       toast.error("Analysis failed");
@@ -61,10 +80,15 @@ const ResumeDetail = () => {
   };
 
   const runJobMatch = async () => {
-    if (!jobDesc.trim()) { toast.error("Enter a job description"); return; }
+    if (!jobDesc.trim()) {
+      toast.error("Enter a job description");
+      return;
+    }
     setLoadingMatch(true);
     try {
-      const { data } = await API.post(`/career/match/${resumeId}`, { jobDescription: jobDesc });
+      const { data } = await API.post(`/career/match/${resumeId}`, {
+        jobDescription: jobDesc,
+      });
       setJobMatch(data);
       toast.success("Match analysis done!");
     } catch {
@@ -77,7 +101,27 @@ const ResumeDetail = () => {
   const downloadReport = async () => {
     setLoadingReport(true);
     try {
-      const res = await API.get(`/report/${resumeId}`, { responseType: "blob" });
+      const params = new URLSearchParams();
+      if (jobMatch) {
+        params.append("matchScore", jobMatch.matchScore);
+        params.append(
+          "matchedSkills",
+          JSON.stringify(jobMatch.matchedSkills || []),
+        );
+        params.append(
+          "missingSkills",
+          JSON.stringify(jobMatch.missingSkills || []),
+        );
+        params.append(
+          "suggestions",
+          JSON.stringify(jobMatch.suggestions || []),
+        );
+      }
+
+      const res = await API.get(`/report/${resumeId}?${params.toString()}`, {
+        responseType: "blob",
+      });
+
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
       a.href = url;
@@ -95,29 +139,43 @@ const ResumeDetail = () => {
   const toArr = (val) => {
     if (!val) return [];
     if (Array.isArray(val)) return val;
-    try { return JSON.parse(val); } catch { return String(val).split(",").map((s) => s.trim()); }
+    try {
+      return JSON.parse(val);
+    } catch {
+      return String(val)
+        .split(",")
+        .map((s) => s.trim());
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#0f1117]">
       <Navbar />
       <div className="max-w-4xl mx-auto px-6 py-10">
-
         {/* Header */}
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-white">Resume Analysis</h1>
-            <p className="text-slate-400 text-sm mt-1">Run each analysis step below</p>
+            <h1 className="text-3xl font-extrabold text-white">
+              Resume Analysis
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">
+              Run each analysis step below
+            </p>
           </div>
           <button
             onClick={downloadReport}
             disabled={loadingReport}
             className="flex items-center gap-2 px-4 py-2.5 bg-[#1a1d2e] border border-[#2e3150] hover:border-indigo-500/50 text-slate-300 text-sm font-semibold rounded-xl transition-all disabled:opacity-50"
           >
-            {loadingReport
-              ? <><Loader2 size={15} className="animate-spin" /> Generating...</>
-              : <><Download size={15} /> Download Report</>
-            }
+            {loadingReport ? (
+              <>
+                <Loader2 size={15} className="animate-spin" /> Generating...
+              </>
+            ) : (
+              <>
+                <Download size={15} /> Download Report
+              </>
+            )}
           </button>
         </div>
 
@@ -134,17 +192,29 @@ const ResumeDetail = () => {
               disabled={loadingAnalysis}
               className="flex items-center gap-2 px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-all"
             >
-              {loadingAnalysis
-                ? <><Loader2 size={15} className="animate-spin" /> Analyzing...</>
-                : <><Sparkles size={15} /> Run AI Analysis</>
-              }
+              {loadingAnalysis ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" /> Analyzing...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={15} /> Run AI Analysis
+                </>
+              )}
             </button>
           ) : (
             <div className="space-y-6">
-              {/* Score cards */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <ScoreCard label="Resume Score" score={analysis.score}    color="#6366f1" />
-                <ScoreCard label="ATS Score"    score={analysis.atsScore} color="#10b981" />
+                <ScoreCard
+                  label="Resume Score"
+                  score={analysis.score}
+                  color="#6366f1"
+                />
+                <ScoreCard
+                  label="ATS Score"
+                  score={analysis.atsScore}
+                  color="#10b981"
+                />
               </div>
 
               {toArr(analysis.skills).length > 0 && (
@@ -153,7 +223,9 @@ const ResumeDetail = () => {
                     Skills Found
                   </p>
                   <div className="flex flex-wrap">
-                    {toArr(analysis.skills).map((s, i) => <SkillBadge key={i} skill={s} variant="purple" />)}
+                    {toArr(analysis.skills).map((s, i) => (
+                      <SkillBadge key={i} skill={s} variant="purple" />
+                    ))}
                   </div>
                 </div>
               )}
@@ -164,7 +236,9 @@ const ResumeDetail = () => {
                     Missing Skills
                   </p>
                   <div className="flex flex-wrap">
-                    {toArr(analysis.missingSkills).map((s, i) => <SkillBadge key={i} skill={s} variant="red" />)}
+                    {toArr(analysis.missingSkills).map((s, i) => (
+                      <SkillBadge key={i} skill={s} variant="red" />
+                    ))}
                   </div>
                 </div>
               )}
@@ -176,8 +250,14 @@ const ResumeDetail = () => {
                   </p>
                   <div className="space-y-2">
                     {toArr(analysis.suggestions).map((s, i) => (
-                      <div key={i} className="flex items-start gap-3 p-3 bg-[#242840] rounded-xl">
-                        <ChevronRight size={14} className="text-indigo-400 mt-0.5 shrink-0" />
+                      <div
+                        key={i}
+                        className="flex items-start gap-3 p-3 bg-[#242840] rounded-xl"
+                      >
+                        <ChevronRight
+                          size={14}
+                          className="text-indigo-400 mt-0.5 shrink-0"
+                        />
                         <span className="text-slate-300 text-sm">{s}</span>
                       </div>
                     ))}
@@ -201,20 +281,26 @@ const ResumeDetail = () => {
               disabled={loadingCareer}
               className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-all"
             >
-              {loadingCareer
-                ? <><Loader2 size={15} className="animate-spin" /> Analyzing...</>
-                : <><Target size={15} /> Get Career Advice</>
-              }
+              {loadingCareer ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" /> Analyzing...
+                </>
+              ) : (
+                <>
+                  <Target size={15} /> Get Career Advice
+                </>
+              )}
             </button>
           ) : (
             <div className="space-y-6">
-              {/* Best fit role */}
               <div className="flex items-center justify-between bg-[#242840] rounded-xl px-4 py-3">
                 <div className="flex items-center gap-2">
                   <Sparkles size={15} className="text-amber-400" />
                   <span className="text-slate-400 text-sm">Best Fit Role</span>
                 </div>
-                <span className="text-white font-bold text-sm">{career.bestFitRole}</span>
+                <span className="text-white font-bold text-sm">
+                  {career.bestFitRole}
+                </span>
               </div>
 
               {career.recommendedRoles?.length > 0 && (
@@ -223,7 +309,9 @@ const ResumeDetail = () => {
                     Recommended Roles
                   </p>
                   <div className="flex flex-wrap">
-                    {career.recommendedRoles.map((r, i) => <SkillBadge key={i} skill={r} variant="green" />)}
+                    {career.recommendedRoles.map((r, i) => (
+                      <SkillBadge key={i} skill={r} variant="green" />
+                    ))}
                   </div>
                 </div>
               )}
@@ -234,7 +322,9 @@ const ResumeDetail = () => {
                     Skills to Learn
                   </p>
                   <div className="flex flex-wrap">
-                    {career.skillsToLearn.map((s, i) => <SkillBadge key={i} skill={s} variant="yellow" />)}
+                    {career.skillsToLearn.map((s, i) => (
+                      <SkillBadge key={i} skill={s} variant="yellow" />
+                    ))}
                   </div>
                 </div>
               )}
@@ -246,7 +336,10 @@ const ResumeDetail = () => {
                   </p>
                   <div className="space-y-2">
                     {career.roadmap.map((step, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 bg-[#242840] rounded-xl">
+                      <div
+                        key={i}
+                        className="flex items-center gap-3 p-3 bg-[#242840] rounded-xl"
+                      >
                         <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                           {i + 1}
                         </div>
@@ -279,16 +372,25 @@ const ResumeDetail = () => {
             disabled={loadingMatch}
             className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-all"
           >
-            {loadingMatch
-              ? <><Loader2 size={15} className="animate-spin" /> Matching...</>
-              : <><ClipboardList size={15} /> Match Resume</>
-            }
+            {loadingMatch ? (
+              <>
+                <Loader2 size={15} className="animate-spin" /> Matching...
+              </>
+            ) : (
+              <>
+                <ClipboardList size={15} /> Match Resume
+              </>
+            )}
           </button>
 
           {jobMatch && (
             <div className="mt-6 space-y-6">
               <div className="w-fit">
-                <ScoreCard label="Match Score" score={jobMatch.matchScore} color="#f59e0b" />
+                <ScoreCard
+                  label="Match Score"
+                  score={jobMatch.matchScore}
+                  color="#f59e0b"
+                />
               </div>
 
               {jobMatch.matchedSkills?.length > 0 && (
@@ -297,7 +399,9 @@ const ResumeDetail = () => {
                     Matched Skills
                   </p>
                   <div className="flex flex-wrap">
-                    {jobMatch.matchedSkills.map((s, i) => <SkillBadge key={i} skill={s} variant="green" />)}
+                    {jobMatch.matchedSkills.map((s, i) => (
+                      <SkillBadge key={i} skill={s} variant="green" />
+                    ))}
                   </div>
                 </div>
               )}
@@ -308,7 +412,9 @@ const ResumeDetail = () => {
                     Missing Skills
                   </p>
                   <div className="flex flex-wrap">
-                    {jobMatch.missingSkills.map((s, i) => <SkillBadge key={i} skill={s} variant="red" />)}
+                    {jobMatch.missingSkills.map((s, i) => (
+                      <SkillBadge key={i} skill={s} variant="red" />
+                    ))}
                   </div>
                 </div>
               )}
@@ -320,8 +426,14 @@ const ResumeDetail = () => {
                   </p>
                   <div className="space-y-2">
                     {jobMatch.suggestions.map((s, i) => (
-                      <div key={i} className="flex items-start gap-3 p-3 bg-[#242840] rounded-xl">
-                        <ChevronRight size={14} className="text-amber-400 mt-0.5 shrink-0" />
+                      <div
+                        key={i}
+                        className="flex items-start gap-3 p-3 bg-[#242840] rounded-xl"
+                      >
+                        <ChevronRight
+                          size={14}
+                          className="text-amber-400 mt-0.5 shrink-0"
+                        />
                         <span className="text-slate-300 text-sm">{s}</span>
                       </div>
                     ))}

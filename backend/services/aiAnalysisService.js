@@ -1,6 +1,64 @@
 const { aiComplete } = require("../utils/geminiClient");
 
+const detectResume = async (resumeText) => {
+  const prompt = `
+Analyze this text and determine if it is a resume/CV or not.
+
+A resume/CV typically contains AT LEAST 3 of these:
+- Person's name and contact information (email, phone)
+- Work experience or internships
+- Education section (degree, institution)
+- Skills section
+- Projects section
+- Professional summary or objective
+
+Text to analyze:
+${resumeText.slice(0, 1000)}
+
+Return ONLY this exact JSON. No markdown. No explanation:
+{
+  "isResume": true or false,
+  "confidence": "high/medium/low",
+  "reason": "<one line reason if not a resume>"
+}
+`;
+
+  const systemPrompt =
+    "You are a document classifier. You only output valid JSON. Never add markdown or explanation.";
+
+  const result = await aiComplete(prompt, systemPrompt);
+
+  try {
+    const cleaned = result.replace(/```json|```/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch {
+    return { isResume: true, confidence: "low", reason: "" };
+  }
+};
+
 const analyzeResume = async (resumeText) => {
+  // Step 1 — Check if it is actually a resume
+  const detection = await detectResume(resumeText);
+
+  if (!detection.isResume) {
+    return {
+      isResume: false,
+      message:
+        detection.reason ||
+        "The uploaded PDF does not appear to be a resume or CV. Please upload a valid resume.",
+    };
+  }
+
+  // Step 2 — Check minimum content
+  if (resumeText.trim().split(" ").length < 50) {
+    return {
+      isResume: false,
+      message:
+        "The PDF appears to be empty or has very little text. Please upload a text-based resume (not a scanned image).",
+    };
+  }
+
+  // Step 3 — Full analysis
   const systemPrompt =
     "You are a strict ATS scoring machine that works across ALL professional domains. You score resumes objectively and harshly based on domain-specific standards. You output ONLY valid JSON. Never inflate scores. Never add markdown or explanation.";
 
@@ -88,6 +146,7 @@ from THIS resume with an example rewrite.
 Return ONLY this exact JSON. No markdown. No explanation. Nothing before or after:
 
 {
+  "isResume": true,
   "domain": "<detected professional domain>",
   "experienceLevel": "<Fresher/Junior/Mid-Level/Senior/Expert>",
   "score": <resume score — realistic, never rounded>,

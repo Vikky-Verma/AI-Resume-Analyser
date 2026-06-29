@@ -12,19 +12,25 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { data } = await API.post("/auth/login", form);
-      login(data.user, data.token);
-      toast.success("Welcome back!");
-      navigate("/dashboard");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const { data } = await API.post("/auth/login", form);
+
+    console.log("Login Response:", data);
+
+    login(data.user, data.token);
+
+    toast.success("Welcome back!");
+    navigate("/dashboard");
+  } catch (err) {
+    console.error(err);
+    toast.error(err.response?.data?.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0f1117] px-4"

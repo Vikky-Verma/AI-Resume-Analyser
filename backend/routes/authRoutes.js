@@ -46,14 +46,13 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  console.log("🚀 NEW LOGIN ROUTE IS RUNNING");
   try {
-    const { email, password } =
-      req.body;
+    const { email, password } = req.body;
 
-    const user =
-      await prisma.user.findUnique({
-        where: { email },
-      });
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
     if (!user) {
       return res.status(400).json({
@@ -61,11 +60,10 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const isMatch =
-      await bcrypt.compare(
-        password,
-        user.password
-      );
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
 
     if (!isMatch) {
       return res.status(400).json({
@@ -86,8 +84,15 @@ router.post("/login", async (req, res) => {
 
     res.json({
       token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (err) {
+    console.error(err);
+
     res.status(500).json({
       message: "Server Error",
     });

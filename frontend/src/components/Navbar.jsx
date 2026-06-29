@@ -10,6 +10,7 @@ import { useState, useRef, useEffect } from "react";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  console.log("User:", user);
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);

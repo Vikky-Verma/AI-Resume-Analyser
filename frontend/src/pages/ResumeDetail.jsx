@@ -56,19 +56,17 @@ const ResumeDetail = () => {
       } catch (_) {}
 
       const { data } = await API.post(`/analysis/${resumeId}`);
-
-      if (data.analysis?.isResume === false) {
-        setNotResume(
-          data.analysis.message ||
-            "This document does not appear to be a resume or CV."
-        );
-        return;
-      }
-
       setAnalysis(data.analysis);
       toast.success("Analysis complete!");
-    } catch {
-      toast.error("Analysis failed");
+    } catch (err) {
+      const errData = err.response?.data;
+      if (errData?.isResume === false) {
+        setNotResume(
+          errData.message || "This document does not appear to be a resume or CV."
+        );
+      } else {
+        toast.error("Analysis failed");
+      }
     } finally {
       setLoadingAnalysis(false);
     }
@@ -150,7 +148,6 @@ const ResumeDetail = () => {
       <Navbar />
       <div className="max-w-4xl mx-auto px-6 py-10">
 
-        {/* Header */}
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-extrabold text-white">Resume Analysis</h1>
@@ -169,7 +166,6 @@ const ResumeDetail = () => {
           </button>
         </div>
 
-        {/* ── Section 1: AI Analysis ── */}
         <Section
           icon={<Cpu size={16} />}
           title="AI Resume Analysis"
@@ -251,7 +247,6 @@ const ResumeDetail = () => {
           )}
         </Section>
 
-        {/* ── Section 2: Career Advice ── */}
         <Section
           icon={<Target size={16} />}
           title="Career Recommendation"
@@ -321,7 +316,6 @@ const ResumeDetail = () => {
           )}
         </Section>
 
-        {/* ── Section 3: Job Match ── */}
         <Section
           icon={<Briefcase size={16} />}
           title="Job Description Match"

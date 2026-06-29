@@ -20,18 +20,7 @@ const createAnalysis = async (req, res) => {
     if (!resume.extractedText) {
       return res.status(400).json({
         success: false,
-        message: "Resume text not extracted yet",
-      });
-    }
-
-    // Check minimum word count
-    const wordCount = resume.extractedText.trim().split(/\s+/).length;
-    if (wordCount < 50) {
-      return res.status(400).json({
-        success: false,
-        isResume: false,
-        message:
-          "The PDF appears to be empty or has very little text. Please upload a text-based resume, not a scanned image.",
+        message: "Resume text not extracted yet. Please parse the resume first.",
       });
     }
 
@@ -39,53 +28,40 @@ const createAnalysis = async (req, res) => {
     const aiResponse = await analyzeResume(resume.extractedText);
 
     console.log("===== AI RESPONSE =====");
-    console.log(aiResponse);
+    console.log(typeof aiResponse, aiResponse);
     console.log("=======================");
 
-    // Handle object response (when isResume is false)
-    // aiAnalysisService returns plain object for non-resumes
-    if (typeof aiResponse === "object" && aiResponse?.isResume === false) {
-      return res.status(400).json({
-        success: false,
-        isResume: false,
-        message: aiResponse.message,
-      });
-    }
-
-    // Clean string response
-    const cleaned =
-      typeof aiResponse === "string"
-        ? aiResponse
-            .replace(/```json/g, "")
-            .replace(/```/g, "")
-            .trim()
-        : JSON.stringify(aiResponse);
-
-    console.log("===== CLEANED RESPONSE =====");
-    console.log(cleaned);
-    console.log("============================");
-
-    // Parse JSON
+    // Parse result
     let result;
-    try {
-      result = JSON.parse(cleaned);
-    } catch (err) {
-      console.log("JSON Parse Error:", err.message);
+
+    if (typeof aiResponse === "object") {
+      // Already parsed object
+      result = aiResponse;
+    } else if (typeof aiResponse === "string") {
+      try {
+        result = JSON.parse(aiResponse);
+      } catch (err) {
+        console.log("JSON Parse Error:", err.message);
+        console.log("Raw response:", aiResponse);
+        return res.status(500).json({
+          success: false,
+          message: "AI returned invalid JSON. Please try again.",
+          raw: aiResponse.slice(0, 500),
+        });
+      }
+    } else {
       return res.status(500).json({
         success: false,
-        message: "Invalid AI Response — could not parse JSON",
-        aiResponse: cleaned,
+        message: "Unexpected AI response type",
       });
     }
 
-    // Check if AI itself said not a resume
-    if (result?.isResume === false) {
+    // Not a resume
+    if (result.isResume === false) {
       return res.status(400).json({
         success: false,
         isResume: false,
-        message:
-          result.message ||
-          "The uploaded PDF does not appear to be a resume or CV. Please upload a valid resume.",
+        message: result.message || "This does not appear to be a resume. Please upload a valid resume.",
       });
     }
 
@@ -97,10 +73,11 @@ const createAnalysis = async (req, res) => {
       !Array.isArray(result.missingSkills) ||
       !Array.isArray(result.suggestions)
     ) {
+      console.log("Missing fields in result:", result);
       return res.status(500).json({
         success: false,
-        message: "AI response missing required fields",
-        result,
+        message: "AI response is missing required fields. Please try again.",
+        received: Object.keys(result),
       });
     }
 
@@ -136,13 +113,13 @@ const createAnalysis = async (req, res) => {
 
   } catch (error) {
     console.log("===== ANALYSIS ERROR =====");
-    console.log(error);
+    console.log("Message:", error.message);
+    console.log("Stack:", error.stack);
     console.log("==========================");
 
     return res.status(500).json({
       success: false,
-      message: "Analysis Failed",
-      error: error.message,
+      message: error.message || "Analysis Failed",
     });
   }
 };

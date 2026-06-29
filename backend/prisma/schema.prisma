@@ -14,19 +14,16 @@ datasource db {
 
 
 model Analysis {
-  id             String   @id @default(cuid())
-
-  score          Int
-  atsScore       Int
-
-  skills         Json
-  missingSkills  Json
-  suggestions    Json
-
-  createdAt      DateTime @default(now())
-
-  resumeId       String   @unique
-  resume         Resume   @relation(fields: [resumeId], references: [id])
+  id              String   @id @default(cuid())
+  resumeId        String   @unique
+  score           Float
+  atsScore        Float
+  domain          String?
+  experienceLevel String?
+  skills          String[]
+  missingSkills   String[]
+  suggestions     String[]
+  resume          Resume   @relation(fields: [resumeId], references: [id])
 }
 
 model Resume {

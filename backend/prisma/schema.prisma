@@ -49,7 +49,33 @@ model User {
   password  String
   
   resume    Resume[]
+  mockInterviews MockInterview[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model MockInterview {
+  id              String    @id @default(cuid())
+
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+
+  resumeId        String?
+
+  company         String
+  role            String
+  level           String    // Fresher | Intermediate | Advanced
+
+  status          String    @default("in_progress") // in_progress | completed
+
+  // Array of { type, label, score, questions: [{ question, answer, score, feedback }] }
+  rounds          Json
+
+  overallScore    Float?
+  overallFeedback String?
+  verdict         String?
+
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
 }

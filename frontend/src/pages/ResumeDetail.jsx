@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import ScoreCard from "../components/ScoreCard";
@@ -15,6 +15,7 @@ import {
   Sparkles,
   ClipboardList,
   AlertTriangle,
+  Mic,
 } from "lucide-react";
 
 const Section = ({
@@ -26,7 +27,9 @@ const Section = ({
 }) => (
   <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-6 mb-5">
     <div className="flex items-center gap-3 mb-5">
-      <div className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center`}>
+      <div
+        className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center`}
+      >
         <span className={iconColor}>{icon}</span>
       </div>
       <h3 className="text-white font-bold text-base">{title}</h3>
@@ -37,6 +40,7 @@ const Section = ({
 
 const ResumeDetail = () => {
   const { resumeId } = useParams();
+  const navigate = useNavigate();
   const [analysis, setAnalysis] = useState(null);
   const [career, setCareer] = useState(null);
   const [jobMatch, setJobMatch] = useState(null);
@@ -62,7 +66,8 @@ const ResumeDetail = () => {
       const errData = err.response?.data;
       if (errData?.isResume === false) {
         setNotResume(
-          errData.message || "This document does not appear to be a resume or CV."
+          errData.message ||
+            "This document does not appear to be a resume or CV.",
         );
       } else {
         toast.error("Analysis failed");
@@ -110,9 +115,18 @@ const ResumeDetail = () => {
       const params = new URLSearchParams();
       if (jobMatch) {
         params.append("matchScore", jobMatch.matchScore);
-        params.append("matchedSkills", JSON.stringify(jobMatch.matchedSkills || []));
-        params.append("missingSkills", JSON.stringify(jobMatch.missingSkills || []));
-        params.append("suggestions", JSON.stringify(jobMatch.suggestions || []));
+        params.append(
+          "matchedSkills",
+          JSON.stringify(jobMatch.matchedSkills || []),
+        );
+        params.append(
+          "missingSkills",
+          JSON.stringify(jobMatch.missingSkills || []),
+        );
+        params.append(
+          "suggestions",
+          JSON.stringify(jobMatch.suggestions || []),
+        );
       }
 
       const res = await API.get(`/report/${resumeId}?${params.toString()}`, {
@@ -139,7 +153,9 @@ const ResumeDetail = () => {
     try {
       return JSON.parse(val);
     } catch {
-      return String(val).split(",").map((s) => s.trim());
+      return String(val)
+        .split(",")
+        .map((s) => s.trim());
     }
   };
 
@@ -147,11 +163,14 @@ const ResumeDetail = () => {
     <div className="min-h-screen bg-[#0f1117]">
       <Navbar />
       <div className="max-w-4xl mx-auto px-6 py-10">
-
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-white">Resume Analysis</h1>
-            <p className="text-slate-400 text-sm mt-1">Run each analysis step below</p>
+            <h1 className="text-3xl font-extrabold text-white">
+              Resume Analysis
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">
+              Run each analysis step below
+            </p>
           </div>
           <button
             onClick={downloadReport}
@@ -159,9 +178,13 @@ const ResumeDetail = () => {
             className="flex items-center gap-2 px-4 py-2.5 bg-[#1a1d2e] border border-[#2e3150] hover:border-indigo-500/50 text-slate-300 text-sm font-semibold rounded-xl transition-all disabled:opacity-50"
           >
             {loadingReport ? (
-              <><Loader2 size={15} className="animate-spin" /> Generating...</>
+              <>
+                <Loader2 size={15} className="animate-spin" /> Generating...
+              </>
             ) : (
-              <><Download size={15} /> Download Report</>
+              <>
+                <Download size={15} /> Download Report
+              </>
             )}
           </button>
         </div>
@@ -180,9 +203,13 @@ const ResumeDetail = () => {
                 className="flex items-center gap-2 px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-all w-fit"
               >
                 {loadingAnalysis ? (
-                  <><Loader2 size={15} className="animate-spin" /> Analyzing...</>
+                  <>
+                    <Loader2 size={15} className="animate-spin" /> Analyzing...
+                  </>
                 ) : (
-                  <><Sparkles size={15} /> Run AI Analysis</>
+                  <>
+                    <Sparkles size={15} /> Run AI Analysis
+                  </>
                 )}
               </button>
 
@@ -192,8 +219,12 @@ const ResumeDetail = () => {
                     <AlertTriangle size={16} className="text-red-400" />
                   </div>
                   <div>
-                    <p className="text-red-400 font-semibold text-sm mb-1">Not a Resume</p>
-                    <p className="text-slate-400 text-sm leading-relaxed">{notResume}</p>
+                    <p className="text-red-400 font-semibold text-sm mb-1">
+                      Not a Resume
+                    </p>
+                    <p className="text-slate-400 text-sm leading-relaxed">
+                      {notResume}
+                    </p>
                     <p className="text-slate-500 text-xs mt-2">
                       Please go back and upload a valid resume or CV (PDF/DOCX).
                     </p>
@@ -204,13 +235,23 @@ const ResumeDetail = () => {
           ) : (
             <div className="space-y-6">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <ScoreCard label="Resume Score" score={analysis.score} color="#6366f1" />
-                <ScoreCard label="ATS Score" score={analysis.atsScore} color="#10b981" />
+                <ScoreCard
+                  label="Resume Score"
+                  score={analysis.score}
+                  color="#6366f1"
+                />
+                <ScoreCard
+                  label="ATS Score"
+                  score={analysis.atsScore}
+                  color="#10b981"
+                />
               </div>
 
               {toArr(analysis.skills).length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Skills Found</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Skills Found
+                  </p>
                   <div className="flex flex-wrap">
                     {toArr(analysis.skills).map((s, i) => (
                       <SkillBadge key={i} skill={s} variant="purple" />
@@ -221,7 +262,9 @@ const ResumeDetail = () => {
 
               {toArr(analysis.missingSkills).length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Missing Skills</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Missing Skills
+                  </p>
                   <div className="flex flex-wrap">
                     {toArr(analysis.missingSkills).map((s, i) => (
                       <SkillBadge key={i} skill={s} variant="red" />
@@ -232,11 +275,19 @@ const ResumeDetail = () => {
 
               {toArr(analysis.suggestions).length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Suggestions</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Suggestions
+                  </p>
                   <div className="space-y-2">
                     {toArr(analysis.suggestions).map((s, i) => (
-                      <div key={i} className="flex items-start gap-3 p-3 bg-[#242840] rounded-xl">
-                        <ChevronRight size={14} className="text-indigo-400 mt-0.5 shrink-0" />
+                      <div
+                        key={i}
+                        className="flex items-start gap-3 p-3 bg-[#242840] rounded-xl"
+                      >
+                        <ChevronRight
+                          size={14}
+                          className="text-indigo-400 mt-0.5 shrink-0"
+                        />
                         <span className="text-slate-300 text-sm">{s}</span>
                       </div>
                     ))}
@@ -260,9 +311,13 @@ const ResumeDetail = () => {
               className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-all"
             >
               {loadingCareer ? (
-                <><Loader2 size={15} className="animate-spin" /> Analyzing...</>
+                <>
+                  <Loader2 size={15} className="animate-spin" /> Analyzing...
+                </>
               ) : (
-                <><Target size={15} /> Get Career Advice</>
+                <>
+                  <Target size={15} /> Get Career Advice
+                </>
               )}
             </button>
           ) : (
@@ -272,12 +327,16 @@ const ResumeDetail = () => {
                   <Sparkles size={15} className="text-amber-400" />
                   <span className="text-slate-400 text-sm">Best Fit Role</span>
                 </div>
-                <span className="text-white font-bold text-sm">{career.bestFitRole}</span>
+                <span className="text-white font-bold text-sm">
+                  {career.bestFitRole}
+                </span>
               </div>
 
               {career.recommendedRoles?.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Recommended Roles</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Recommended Roles
+                  </p>
                   <div className="flex flex-wrap">
                     {career.recommendedRoles.map((r, i) => (
                       <SkillBadge key={i} skill={r} variant="green" />
@@ -288,7 +347,9 @@ const ResumeDetail = () => {
 
               {career.skillsToLearn?.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Skills to Learn</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Skills to Learn
+                  </p>
                   <div className="flex flex-wrap">
                     {career.skillsToLearn.map((s, i) => (
                       <SkillBadge key={i} skill={s} variant="yellow" />
@@ -299,10 +360,15 @@ const ResumeDetail = () => {
 
               {career.roadmap?.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Career Roadmap</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Career Roadmap
+                  </p>
                   <div className="space-y-2">
                     {career.roadmap.map((step, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 bg-[#242840] rounded-xl">
+                      <div
+                        key={i}
+                        className="flex items-center gap-3 p-3 bg-[#242840] rounded-xl"
+                      >
                         <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                           {i + 1}
                         </div>
@@ -335,21 +401,31 @@ const ResumeDetail = () => {
             className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-all"
           >
             {loadingMatch ? (
-              <><Loader2 size={15} className="animate-spin" /> Matching...</>
+              <>
+                <Loader2 size={15} className="animate-spin" /> Matching...
+              </>
             ) : (
-              <><ClipboardList size={15} /> Match Resume</>
+              <>
+                <ClipboardList size={15} /> Match Resume
+              </>
             )}
           </button>
 
           {jobMatch && (
             <div className="mt-6 space-y-6">
               <div className="w-fit">
-                <ScoreCard label="Match Score" score={jobMatch.matchScore} color="#f59e0b" />
+                <ScoreCard
+                  label="Match Score"
+                  score={jobMatch.matchScore}
+                  color="#f59e0b"
+                />
               </div>
 
               {jobMatch.matchedSkills?.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Matched Skills</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Matched Skills
+                  </p>
                   <div className="flex flex-wrap">
                     {jobMatch.matchedSkills.map((s, i) => (
                       <SkillBadge key={i} skill={s} variant="green" />
@@ -360,7 +436,9 @@ const ResumeDetail = () => {
 
               {jobMatch.missingSkills?.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Missing Skills</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Missing Skills
+                  </p>
                   <div className="flex flex-wrap">
                     {jobMatch.missingSkills.map((s, i) => (
                       <SkillBadge key={i} skill={s} variant="red" />
@@ -371,11 +449,19 @@ const ResumeDetail = () => {
 
               {jobMatch.suggestions?.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Suggestions</p>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
+                    Suggestions
+                  </p>
                   <div className="space-y-2">
                     {jobMatch.suggestions.map((s, i) => (
-                      <div key={i} className="flex items-start gap-3 p-3 bg-[#242840] rounded-xl">
-                        <ChevronRight size={14} className="text-amber-400 mt-0.5 shrink-0" />
+                      <div
+                        key={i}
+                        className="flex items-start gap-3 p-3 bg-[#242840] rounded-xl"
+                      >
+                        <ChevronRight
+                          size={14}
+                          className="text-amber-400 mt-0.5 shrink-0"
+                        />
                         <span className="text-slate-300 text-sm">{s}</span>
                       </div>
                     ))}
@@ -386,6 +472,24 @@ const ResumeDetail = () => {
           )}
         </Section>
 
+        <Section
+          icon={<Mic size={16} />}
+          title="Mock Interview"
+          iconBg="bg-violet-950"
+          iconColor="text-violet-400"
+        >
+          <p className="text-slate-400 text-sm mb-4">
+            Practice a 3-round mock interview — HR, Technical &amp; DSA — with
+            questions generated from this resume, and get AI feedback + a score
+            for every answer.
+          </p>
+          <button
+            onClick={() => navigate(`/interview/new?resumeId=${resumeId}`)}
+            className="flex items-center gap-2 px-5 py-2.5 bg-violet-500 hover:bg-violet-600 text-white text-sm font-semibold rounded-xl transition-all"
+          >
+            <Mic size={15} /> Start Mock Interview
+          </button>
+        </Section>
       </div>
     </div>
   );

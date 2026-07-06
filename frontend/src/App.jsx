@@ -6,6 +6,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ResumeDetail from "./pages/ResumeDetail";
+import MockInterviewSetup from "./pages/MockInterviewSetup";
+import InterviewRoom from "./pages/InterviewRoom";
+import InterviewReport from "./pages/InterviewReport";
 
 function App() {
   return (
@@ -27,12 +30,46 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={
-            <ProtectedRoute><Dashboard /></ProtectedRoute>
-          } />
-          <Route path="/resume/:resumeId" element={
-            <ProtectedRoute><ResumeDetail /></ProtectedRoute>
-          } />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume/:resumeId"
+            element={
+              <ProtectedRoute>
+                <ResumeDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/interview/new"
+            element={
+              <ProtectedRoute>
+                <MockInterviewSetup />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/interview/:interviewId/room"
+            element={
+              <ProtectedRoute>
+                <InterviewRoom />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/interview/:interviewId/report"
+            element={
+              <ProtectedRoute>
+                <InterviewReport />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

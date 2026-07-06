@@ -1,8 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   FileText,
-  LayoutDashboard,
+  Mic,
+  ClipboardCheck,
   LogOut,
   ChevronDown,
 } from "lucide-react";
@@ -10,8 +11,8 @@ import { useState, useRef, useEffect } from "react";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  console.log("User:", user);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -37,32 +38,52 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  const isActive = (path) => location.pathname.startsWith(path);
+
+  const NavLink = ({ to, children }) => (
+    <Link
+      to={to}
+      className={`text-sm font-semibold transition-colors ${
+        isActive(to) ? "text-indigo-400" : "text-slate-300 hover:text-white"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+
   return (
     <nav className="bg-[#1a1d2e] border-b border-[#2e3150] px-6 h-16 flex items-center justify-between sticky top-0 z-50">
-      {/* Logo */}
-      <Link
-        to="/dashboard"
-        className="flex items-center gap-3 no-underline"
-      >
-        <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center">
-          <FileText size={18} className="text-white" />
-        </div>
+      {/* Logo + Section Links */}
+      <div className="flex items-center gap-8">
+        <Link
+          to="/dashboard"
+          className="flex items-center gap-3 no-underline shrink-0"
+        >
+          <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center">
+            <FileText size={18} className="text-white" />
+          </div>
 
-        <span className="text-white font-bold text-lg tracking-tight">
-          ResumeAI
-        </span>
-      </Link>
+          <span className="text-white font-bold text-lg tracking-tight">
+            ResumeAI
+          </span>
+        </Link>
+
+        <div className="hidden sm:flex items-center gap-6">
+          <NavLink to="/interview">
+            <span className="flex items-center gap-1.5">
+              <Mic size={14} /> Mock Interview
+            </span>
+          </NavLink>
+          <NavLink to="/ats-checker">
+            <span className="flex items-center gap-1.5">
+              <ClipboardCheck size={14} /> ATS Checker
+            </span>
+          </NavLink>
+        </div>
+      </div>
 
       {/* Right Side */}
       <div className="flex items-center gap-3">
-        <Link
-          to="/dashboard"
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 border border-[#2e3150] hover:bg-[#242840] transition-all"
-        >
-          <LayoutDashboard size={15} />
-          <span className="hidden sm:block">Dashboard</span>
-        </Link>
-
         {user && (
           <div className="relative" ref={dropdownRef}>
             <button

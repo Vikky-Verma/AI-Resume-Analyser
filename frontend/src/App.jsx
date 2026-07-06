@@ -9,6 +9,7 @@ import ResumeDetail from "./pages/ResumeDetail";
 import MockInterviewSetup from "./pages/MockInterviewSetup";
 import InterviewRoom from "./pages/InterviewRoom";
 import InterviewReport from "./pages/InterviewReport";
+import ATSChecker from "./pages/ATSChecker";
 
 function App() {
   return (
@@ -47,10 +48,26 @@ function App() {
             }
           />
           <Route
+            path="/interview"
+            element={
+              <ProtectedRoute>
+                <MockInterviewSetup />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/interview/new"
             element={
               <ProtectedRoute>
                 <MockInterviewSetup />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ats-checker"
+            element={
+              <ProtectedRoute>
+                <ATSChecker />
               </ProtectedRoute>
             }
           />

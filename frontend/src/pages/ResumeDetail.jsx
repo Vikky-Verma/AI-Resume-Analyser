@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import ScoreCard from "../components/ScoreCard";
@@ -15,7 +15,6 @@ import {
   Sparkles,
   ClipboardList,
   AlertTriangle,
-  Mic,
 } from "lucide-react";
 
 const Section = ({
@@ -40,7 +39,6 @@ const Section = ({
 
 const ResumeDetail = () => {
   const { resumeId } = useParams();
-  const navigate = useNavigate();
   const [analysis, setAnalysis] = useState(null);
   const [career, setCareer] = useState(null);
   const [jobMatch, setJobMatch] = useState(null);
@@ -470,25 +468,6 @@ const ResumeDetail = () => {
               )}
             </div>
           )}
-        </Section>
-
-        <Section
-          icon={<Mic size={16} />}
-          title="Mock Interview"
-          iconBg="bg-violet-950"
-          iconColor="text-violet-400"
-        >
-          <p className="text-slate-400 text-sm mb-4">
-            Practice a 3-round mock interview — HR, Technical &amp; DSA — with
-            questions generated from this resume, and get AI feedback + a score
-            for every answer.
-          </p>
-          <button
-            onClick={() => navigate(`/interview/new?resumeId=${resumeId}`)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-violet-500 hover:bg-violet-600 text-white text-sm font-semibold rounded-xl transition-all"
-          >
-            <Mic size={15} /> Start Mock Interview
-          </button>
         </Section>
       </div>
     </div>

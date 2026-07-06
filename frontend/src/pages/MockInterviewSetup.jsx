@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
 import {
   Mic,
-  FileText,
   Building2,
   BriefcaseBusiness,
   GraduationCap,
   Sparkles,
   Loader2,
   ChevronRight,
+  CloudUpload,
+  Award,
+  CheckCircle2,
 } from "lucide-react";
 
 const LEVELS = [
@@ -28,35 +30,44 @@ const LOADING_LINES = [
   "Almost ready...",
 ];
 
+const VERDICT_STYLE = {
+  "Strong Hire": { bg: "bg-emerald-950", border: "border-emerald-800", text: "text-emerald-400" },
+  Hire: { bg: "bg-teal-950", border: "border-teal-800", text: "text-teal-400" },
+  "Leaning No Hire": { bg: "bg-amber-950", border: "border-amber-800", text: "text-amber-400" },
+  "No Hire": { bg: "bg-red-950", border: "border-red-800", text: "text-red-400" },
+};
+
 const MockInterviewSetup = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [resumes, setResumes] = useState([]);
-  const [loadingResumes, setLoadingResumes] = useState(true);
-  const [resumeId, setResumeId] = useState(searchParams.get("resumeId") || "");
+  // Step 1: this section's OWN resume upload — independent of Resume Analysis
+  const [uploadedResume, setUploadedResume] = useState(null); // { id, originalName }
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+
+  // Step 2: interview setup form
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
   const [level, setLevel] = useState("Fresher");
   const [submitting, setSubmitting] = useState(false);
   const [loadingLine, setLoadingLine] = useState(0);
 
+  // Past interviews — this page's own history, standalone home
+  const [interviews, setInterviews] = useState([]);
+  const [loadingInterviews, setLoadingInterviews] = useState(true);
+
   useEffect(() => {
-    const fetchResumes = async () => {
+    const fetchInterviews = async () => {
       try {
-        const { data } = await API.get("/resume/my-resumes");
-        setResumes(data.resumes || []);
-        if (!resumeId && data.resumes?.length) {
-          setResumeId(data.resumes[0].id);
-        }
+        const { data } = await API.get("/interview/my-interviews");
+        setInterviews(data.interviews || []);
       } catch {
-        toast.error("Failed to load resumes");
+        /* silent — non-critical */
       } finally {
-        setLoadingResumes(false);
+        setLoadingInterviews(false);
       }
     };
-    fetchResumes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchInterviews();
   }, []);
 
   useEffect(() => {
@@ -67,11 +78,43 @@ const MockInterviewSetup = () => {
     return () => clearInterval(interval);
   }, [submitting]);
 
+  const handleUpload = async (file) => {
+    const allowedTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!file || !allowedTypes.includes(file.type)) {
+      toast.error("Please upload a PDF or DOCX file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("resume", file);
+    setUploading(true);
+
+    try {
+      const { data } = await API.post("/resume/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      // Parse immediately so the interview can be generated from it
+      await API.post(`/resume/parse/${data.resume.id}`);
+
+      setUploadedResume(data.resume);
+      toast.success("Resume ready!");
+    } catch {
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!resumeId) {
-      toast.error("Please select a resume");
+    if (!uploadedResume) {
+      toast.error("Please upload your resume first");
       return;
     }
     if (!company.trim() || !role.trim()) {
@@ -83,7 +126,7 @@ const MockInterviewSetup = () => {
     setLoadingLine(0);
     try {
       const { data } = await API.post("/interview/start", {
-        resumeId,
+        resumeId: uploadedResume.id,
         company: company.trim(),
         role: role.trim(),
         level,
@@ -125,36 +168,92 @@ const MockInterviewSetup = () => {
               </p>
             </div>
           </div>
+        ) : !uploadedResume ? (
+          /* ── Step 1: Own Upload — independent of Resume Analysis ── */
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragOver(false);
+              handleUpload(e.dataTransfer.files[0]);
+            }}
+            className={`bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-14 text-center transition-all ${
+              dragOver ? "border-violet-500 bg-violet-950/20" : ""
+            }`}
+          >
+            {uploading ? (
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 size={40} className="text-violet-400 animate-spin" />
+                <p className="text-slate-400 text-sm">Uploading your resume...</p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-16 h-16 bg-[#242840] rounded-2xl flex items-center justify-center">
+                  <CloudUpload size={28} className="text-violet-400" />
+                </div>
+                <div>
+                  <p className="text-white font-bold text-xl">
+                    Upload Your Resume
+                  </p>
+                  <p className="text-slate-500 text-sm mt-2 max-w-sm">
+                    Upload a PDF or DOCX — we'll use it to generate personalized
+                    interview questions
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-center gap-3 mt-2">
+                  <input
+                    id="mock-interview-file-input"
+                    type="file"
+                    accept=".pdf,.docx"
+                    className="hidden"
+                    onChange={(e) => handleUpload(e.target.files[0])}
+                  />
+                  <label
+                    htmlFor="mock-interview-file-input"
+                    className="px-4 py-2 bg-[#242840] border border-[#2e3150] hover:border-violet-500/50 text-slate-300 text-sm font-medium rounded-xl cursor-pointer transition-all"
+                  >
+                    Choose File
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      document
+                        .getElementById("mock-interview-file-input")
+                        .click()
+                    }
+                    className="w-full sm:w-auto px-8 py-3 bg-violet-500 hover:bg-violet-600 text-white text-sm font-bold rounded-xl transition-all"
+                  >
+                    Upload Resume
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
+          /* ── Step 2: Company / Role / Level ── */
           <form
             onSubmit={handleSubmit}
             className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-6 space-y-6"
           >
-            <div>
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
-                <FileText size={13} /> Resume
-              </label>
-              {loadingResumes ? (
-                <div className="flex items-center gap-2 text-slate-500 text-sm">
-                  <Loader2 size={14} className="animate-spin" /> Loading resumes...
-                </div>
-              ) : resumes.length === 0 ? (
-                <p className="text-sm text-slate-500">
-                  You need to upload a resume first from the Dashboard.
-                </p>
-              ) : (
-                <select
-                  value={resumeId}
-                  onChange={(e) => setResumeId(e.target.value)}
-                  className="w-full bg-[#242840] border border-[#2e3150] rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-violet-500 transition-colors"
-                >
-                  {resumes.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.originalName}
-                    </option>
-                  ))}
-                </select>
-              )}
+            <div className="flex items-center justify-between gap-3 bg-[#242840] rounded-xl px-4 py-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                <span className="text-slate-300 text-sm truncate">
+                  {uploadedResume.originalName}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setUploadedResume(null)}
+                className="text-xs font-semibold text-violet-400 hover:text-violet-300 shrink-0"
+              >
+                Change
+              </button>
             </div>
 
             <div>
@@ -214,12 +313,88 @@ const MockInterviewSetup = () => {
 
             <button
               type="submit"
-              disabled={resumes.length === 0}
               className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-violet-500 hover:bg-violet-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-all"
             >
               <Sparkles size={16} /> Generate Interview <ChevronRight size={16} />
             </button>
           </form>
+        )}
+
+        {/* ── Past Interviews — this section's own history ── */}
+        {!submitting && (
+          <div className="mt-12">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4">
+              Past Interviews
+            </p>
+
+            {loadingInterviews ? (
+              <div className="flex justify-center py-10">
+                <Loader2 size={26} className="text-violet-400 animate-spin" />
+              </div>
+            ) : interviews.length === 0 ? (
+              <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-8 text-center">
+                <Mic size={32} className="text-[#2e3150] mx-auto mb-3" />
+                <p className="text-slate-500 text-sm">
+                  No mock interviews yet — your history will show up here.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {interviews.map((iv) => {
+                  const verdictStyle = VERDICT_STYLE[iv.verdict] || null;
+                  return (
+                    <div
+                      key={iv.id}
+                      onClick={() =>
+                        navigate(
+                          iv.status === "completed"
+                            ? `/interview/${iv.id}/report`
+                            : `/interview/${iv.id}/room`
+                        )
+                      }
+                      className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl px-5 py-4 flex items-center justify-between gap-4 hover:border-violet-500/40 cursor-pointer transition-all"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-10 h-10 bg-violet-950 border border-violet-800 rounded-xl flex items-center justify-center flex-shrink-0">
+                          <Mic size={16} className="text-violet-400" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-white font-semibold text-sm truncate">
+                            {iv.role} @ {iv.company}
+                          </p>
+                          <p className="text-slate-500 text-xs mt-1">
+                            {iv.level} ·{" "}
+                            {new Date(iv.createdAt).toLocaleDateString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                            {iv.status !== "completed" && " · In progress"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 shrink-0">
+                        {verdictStyle && (
+                          <span
+                            className={`hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border ${verdictStyle.bg} ${verdictStyle.border} ${verdictStyle.text}`}
+                          >
+                            <Award size={10} /> {iv.verdict}
+                          </span>
+                        )}
+                        {iv.overallScore !== null && iv.overallScore !== undefined && (
+                          <span className="text-white font-bold text-sm">
+                            {iv.overallScore}/100
+                          </span>
+                        )}
+                        <ChevronRight size={16} className="text-slate-500" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

@@ -55,7 +55,7 @@ const InterviewReport = () => {
 
   if (loading || !interview) {
     return (
-      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+      <div className="min-h-screen bg-[#07090f] flex items-center justify-center">
         <Loader2 size={32} className="text-violet-400 animate-spin" />
       </div>
     );
@@ -64,7 +64,7 @@ const InterviewReport = () => {
   const verdictStyle = VERDICT_STYLE[interview.verdict] || VERDICT_STYLE["Hire"];
 
   return (
-    <div className="min-h-screen bg-[#0f1117]">
+    <div className="min-h-screen bg-[#07090f]">
       <Navbar />
 
       <div className="max-w-3xl mx-auto px-6 py-10">
@@ -98,7 +98,7 @@ const InterviewReport = () => {
         </div>
 
         {interview.overallFeedback && (
-          <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-6 mb-6">
+          <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 mb-6">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
               Panel Feedback
             </p>
@@ -113,14 +113,14 @@ const InterviewReport = () => {
             return (
               <div
                 key={round.type}
-                className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl overflow-hidden"
+                className="bg-[#11151d] border border-[#232838] rounded-2xl overflow-hidden"
               >
                 <button
                   onClick={() => setOpenRound(isOpen ? -1 : ri)}
                   className="w-full flex items-center justify-between px-6 py-4"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-[#242840] rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-[#1a1f2e] rounded-lg flex items-center justify-center">
                       <Icon size={15} className="text-violet-400" />
                     </div>
                     <span className="text-white font-bold text-sm">{round.label}</span>
@@ -137,9 +137,9 @@ const InterviewReport = () => {
                 </button>
 
                 {isOpen && (
-                  <div className="px-6 pb-6 space-y-4 border-t border-[#2e3150] pt-4">
+                  <div className="px-6 pb-6 space-y-4 border-t border-[#232838] pt-4">
                     {round.questions.map((q, qi) => (
-                      <div key={qi} className="bg-[#242840] rounded-xl p-4">
+                      <div key={qi} className="bg-[#1a1f2e] rounded-xl p-4">
                         <div className="flex items-start justify-between gap-3 mb-2">
                           <p className="text-white text-sm font-semibold">
                             Q{qi + 1}. {q.question}
@@ -157,7 +157,7 @@ const InterviewReport = () => {
                           </p>
                         )}
                         {q.feedback && (
-                          <p className="text-slate-300 text-xs leading-relaxed border-t border-[#2e3150] pt-2 mt-2">
+                          <p className="text-slate-300 text-xs leading-relaxed border-t border-[#232838] pt-2 mt-2">
                             {q.feedback}
                           </p>
                         )}
@@ -179,7 +179,7 @@ const InterviewReport = () => {
           </Link>
           <Link
             to="/dashboard"
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#1a1d2e] border border-[#2e3150] hover:border-violet-500/50 text-slate-300 text-sm font-semibold rounded-xl transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#11151d] border border-[#232838] hover:border-violet-500/50 text-slate-300 text-sm font-semibold rounded-xl transition-all"
           >
             <LayoutDashboard size={15} /> Back to Dashboard
           </Link>

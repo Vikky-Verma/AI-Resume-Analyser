@@ -224,14 +224,14 @@ const InterviewRoom = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+      <div className="min-h-screen bg-[#07090f] flex items-center justify-center">
         <Loader2 size={32} className="text-violet-400 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1117]">
+    <div className="min-h-screen bg-[#07090f]">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-6 py-8">
@@ -248,7 +248,7 @@ const InterviewRoom = () => {
               className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
                 camOn
                   ? "bg-violet-500/10 border-violet-500 text-violet-300"
-                  : "bg-[#1a1d2e] border-[#2e3150] text-slate-400 hover:border-violet-500/40"
+                  : "bg-[#11151d] border-[#232838] text-slate-400 hover:border-violet-500/40"
               }`}
             >
               {camOn ? <Video size={14} /> : <VideoOff size={14} />}
@@ -270,7 +270,7 @@ const InterviewRoom = () => {
                     ? "bg-violet-500/10 border-violet-500 text-violet-300"
                     : isDone
                     ? "bg-emerald-950/40 border-emerald-800 text-emerald-400"
-                    : "bg-[#1a1d2e] border-[#2e3150] text-slate-500"
+                    : "bg-[#11151d] border-[#232838] text-slate-500"
                 }`}
               >
                 {isDone ? <CheckCircle2 size={15} /> : <Icon size={15} />}
@@ -283,7 +283,7 @@ const InterviewRoom = () => {
           })}
         </div>
 
-        <div className="w-full h-1.5 bg-[#1a1d2e] rounded-full mb-6 overflow-hidden">
+        <div className="w-full h-1.5 bg-[#11151d] rounded-full mb-6 overflow-hidden">
           <div
             className="h-full bg-violet-500 transition-all duration-500"
             style={{ width: `${(answeredCount / totalQuestions) * 100}%` }}
@@ -291,14 +291,14 @@ const InterviewRoom = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-5">
-          <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-6">
+          <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6">
             <div className="flex items-center justify-between mb-5">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
                 {currentRound.label} — Question {questionIndex + 1} of {currentRound.questions.length}
               </p>
               <div
                 className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${
-                  timeLeft <= 10 ? "bg-red-950 text-red-400" : "bg-[#242840] text-slate-400"
+                  timeLeft <= 10 ? "bg-red-950 text-red-400" : "bg-[#1a1f2e] text-slate-400"
                 }`}
               >
                 <Clock size={12} /> {formatTime(timeLeft)}
@@ -320,7 +320,7 @@ const InterviewRoom = () => {
                       ? "Explain your approach, then write pseudocode or code here..."
                       : "Type your answer here, or use the mic..."
                   }
-                  className={`w-full bg-[#242840] border border-[#2e3150] rounded-xl p-4 text-sm text-white placeholder-slate-500 outline-none focus:border-violet-500 transition-colors resize-y mb-4 ${
+                  className={`w-full bg-[#1a1f2e] border border-[#232838] rounded-xl p-4 text-sm text-white placeholder-slate-500 outline-none focus:border-violet-500 transition-colors resize-y mb-4 ${
                     currentRound.type === "DSA" ? "font-mono" : ""
                   }`}
                 />
@@ -331,7 +331,7 @@ const InterviewRoom = () => {
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all disabled:opacity-30 ${
                       listening
                         ? "bg-red-500/10 border-red-500 text-red-300 animate-pulse"
-                        : "bg-[#242840] border-[#2e3150] text-slate-300 hover:border-violet-500/40"
+                        : "bg-[#1a1f2e] border-[#232838] text-slate-300 hover:border-violet-500/40"
                     }`}
                     title={speechSupported ? "Speak your answer" : "Voice input not supported in this browser"}
                   >
@@ -398,7 +398,7 @@ const InterviewRoom = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
+            <div className="bg-[#11151d] border border-[#232838] rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
               {camOn ? (
                 <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
               ) : (
@@ -409,7 +409,7 @@ const InterviewRoom = () => {
               )}
             </div>
 
-            <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-4">
+            <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-4">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
                 {currentRound.label}
               </p>

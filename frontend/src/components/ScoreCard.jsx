@@ -4,10 +4,10 @@ const ScoreCard = ({ label, score, max = 100, color = "#6366f1" }) => {
   const circumference = 2 * Math.PI * r;
 
   return (
-    <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-5 flex flex-col items-center gap-3">
+    <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-5 flex flex-col items-center gap-3">
       <div className="relative w-24 h-24">
         <svg width="96" height="96" className="-rotate-90">
-          <circle cx="48" cy="48" r={r} fill="none" stroke="#2e3150" strokeWidth="8" />
+          <circle cx="48" cy="48" r={r} fill="none" stroke="#232838" strokeWidth="8" />
           <circle
             cx="48" cy="48" r={r}
             fill="none"

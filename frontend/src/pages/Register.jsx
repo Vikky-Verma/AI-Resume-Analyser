@@ -39,7 +39,7 @@ const Register = () => {
             <FileText size={26} className="text-white" />
           </div>
           <h1 className="text-2xl font-extrabold text-white">Create account</h1>
-          <p className="text-slate-400 text-sm mt-2">Start analyzing resumes with AI</p>
+          <p className="text-slate-400 text-sm mt-2">Start your placement journey with AlgoVerse</p>
         </div>
 
         <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-8">

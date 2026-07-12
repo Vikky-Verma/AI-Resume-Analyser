@@ -43,7 +43,7 @@ const Login = () => {
             <FileText size={26} className="text-white" />
           </div>
           <h1 className="text-2xl font-extrabold text-white">Welcome back</h1>
-          <p className="text-slate-400 text-sm mt-2">Sign in to your ResumeAI account</p>
+          <p className="text-slate-400 text-sm mt-2">Sign in to your AlgoVerse account</p>
         </div>
 
         {/* Card */}

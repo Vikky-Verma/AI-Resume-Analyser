@@ -4,6 +4,7 @@ import {
   FileText,
   Mic,
   ClipboardCheck,
+  Radar,
   LogOut,
   ChevronDown,
 } from "lucide-react";
@@ -77,6 +78,11 @@ const Navbar = () => {
           <NavLink to="/ats-checker">
             <span className="flex items-center gap-1.5">
               <ClipboardCheck size={14} /> ATS Checker
+            </span>
+          </NavLink>
+          <NavLink to="/profile-insights">
+            <span className="flex items-center gap-1.5">
+              <Radar size={14} /> Profile Insights
             </span>
           </NavLink>
         </div>

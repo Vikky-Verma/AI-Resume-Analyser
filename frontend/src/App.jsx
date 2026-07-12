@@ -11,6 +11,7 @@ import MockInterviewSetup from "./pages/MockInterviewSetup";
 import InterviewRoom from "./pages/InterviewRoom";
 import InterviewReport from "./pages/InterviewReport";
 import ATSChecker from "./pages/ATSChecker";
+import ProfileInsights from "./pages/ProfileInsights";
 
 function App() {
   return (
@@ -69,6 +70,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ATSChecker />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile-insights"
+            element={
+              <ProtectedRoute>
+                <ProfileInsights />
               </ProtectedRoute>
             }
           />

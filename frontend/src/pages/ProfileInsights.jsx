@@ -8,8 +8,6 @@ import {
   CloudUpload,
   Loader2,
   CheckCircle2,
-  Github,
-  Linkedin,
   Code2,
   Trophy,
   ChefHat,
@@ -21,6 +19,7 @@ import {
   Lightbulb,
   ShieldAlert,
 } from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const STEPS = [
   "Uploading Resume",
@@ -30,8 +29,8 @@ const STEPS = [
 ];
 
 const PLATFORM_ICON = {
-  GitHub: Github,
-  LinkedIn: Linkedin,
+  GitHub: FaGithub,
+  LinkedIn: FaLinkedin,
   LeetCode: Code2,
   Codeforces: Trophy,
   CodeChef: ChefHat,

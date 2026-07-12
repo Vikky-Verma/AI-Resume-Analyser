@@ -116,7 +116,7 @@ const Landing = () => {
             <FileText size={18} className="text-white" />
           </div>
           <span className="text-white font-bold text-lg tracking-tight">
-            ResumeAI
+            AlgoVerse
           </span>
         </div>
 
@@ -152,17 +152,17 @@ const Landing = () => {
         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#11151d] border border-[#232838] rounded-full mb-6">
           <Sparkles size={13} className="text-indigo-400" />
           <span className="text-slate-400 text-xs font-medium">
-            Powered by Cloudflare Workers AI
+            Your AI-Powered Placement Platform
           </span>
         </div>
 
         <h1 className="text-5xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">
-          Your Resume, <br /> Evaluated Like a Recruiter Would
+          Everything You Need <br /> To Get Placed
         </h1>
         <p className="text-slate-400 text-lg mt-6 max-w-xl mx-auto">
-          Upload your resume and get brutally honest ATS scoring, career
-          advice, and mock interviews — for every professional domain, not
-          just tech.
+          Resume intelligence, ATS scoring, coding profile analysis, and mock
+          interviews — one platform that tracks your placement readiness end
+          to end.
         </p>
 
         <div className="flex items-center justify-center gap-3 mt-9">
@@ -170,7 +170,7 @@ const Landing = () => {
             to={user ? "/dashboard" : "/register"}
             className="flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-all"
           >
-            {user ? "Go to Dashboard" : "Analyze My Resume"}
+            {user ? "Go to Dashboard" : "Get Started Free"}
             <ArrowRight size={16} />
           </Link>
           <Link
@@ -223,7 +223,7 @@ const Landing = () => {
       <div className="border-t border-[#1e2233]">
         <div className="max-w-4xl mx-auto px-6 py-16 text-center">
           <h2 className="text-2xl font-extrabold text-white mb-3">
-            Ready to see where your resume stands?
+            Ready to check your placement readiness?
           </h2>
           <p className="text-slate-400 text-sm mb-7">
             It takes less than a minute to upload and get your first report.

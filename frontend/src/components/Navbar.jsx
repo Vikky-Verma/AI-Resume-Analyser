@@ -64,7 +64,7 @@ const Navbar = () => {
           </div>
 
           <span className="text-white font-bold text-lg tracking-tight">
-            ResumeAI
+            AlgoVerse
           </span>
         </Link>
 

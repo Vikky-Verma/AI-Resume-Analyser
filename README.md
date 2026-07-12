@@ -1,6 +1,6 @@
-# 🤖 ResumeAI — AI-Powered Resume Analyzer
+# 🚀 AlgoVerse — AI-Powered Placement Platform
 
-> An intelligent full-stack resume analysis platform that provides ATS scoring, skill gap analysis, career roadmap generation, and job description matching for **all professional domains** — Software, Electronics, Medical, Finance, Management, Civil, Marketing, Education, and more.
+> An intelligent full-stack placement-readiness platform that provides ATS scoring, resume analysis, skill gap analysis, career roadmap generation, and job description matching for **all professional domains** — Software, Electronics, Medical, Finance, Management, Civil, Marketing, Education, and more.
 
 🔗 **Live Demo:** [https://ai-resume-analyser-chi-ten.vercel.app](https://ai-resume-analyser-chi-ten.vercel.app)  
 🔗 **Backend API:** [https://ai-resume-analyser-backend-rllt.onrender.com](https://ai-resume-analyser-backend-rllt.onrender.com)  
@@ -51,9 +51,7 @@
 ### AI Services
 | Service | Purpose |
 |---|---|
-| Cloudflare Workers AI | Primary AI (llama-3.1-70b) — Free, no limits |
-| Google Gemini 2.0 Flash | Fallback AI — 1500 req/day free |
-| Groq (llama-3.3-70b) | Final fallback — 100k tokens/day |
+| Cloudflare Workers AI (Llama 3.1 70B) | All AI analysis, scoring, and suggestions — free, no daily limit |
 
 ### Deployment
 | Service | Purpose |
@@ -160,11 +158,9 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
-# AI Services
+# AI Service
 CLOUDFLARE_ACCOUNT_ID=your_account_id
 CLOUDFLARE_API_TOKEN=your_api_token
-GEMINI_API_KEY=your_gemini_key
-GROQ_API_KEY=your_groq_key
 ```
 
 Run database migrations:
@@ -251,9 +247,8 @@ Resume Upload (PDF/DOCX)
    (Auto-detects field)
          ↓
   ┌──────────────────────┐
-  │  Cloudflare AI       │ ← Primary (Free, no limits)
-  │  Gemini 2.0 Flash    │ ← Fallback 1
-  │  Groq llama-3.3-70b  │ ← Fallback 2
+  │  Cloudflare Workers  │
+  │  AI (Llama 3.1 70B)  │
   └──────────────────────┘
          ↓
    ATS Score (0-100)
@@ -344,8 +339,6 @@ model Analysis {
 | Neon DB | [neon.tech](https://neon.tech) | Free tier |
 | Cloudinary | [cloudinary.com](https://cloudinary.com) | 25GB free |
 | Cloudflare AI | [dash.cloudflare.com](https://dash.cloudflare.com) | No daily limit |
-| Gemini | [aistudio.google.com](https://aistudio.google.com) | 1500 req/day |
-| Groq | [console.groq.com](https://console.groq.com) | 100k tokens/day |
 
 ---
 

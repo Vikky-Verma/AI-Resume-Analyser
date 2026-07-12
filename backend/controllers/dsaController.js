@@ -28,6 +28,13 @@ const getLeetCode = async (req, res) => {
       });
     }
 
+    if (error.statusCode === 502) {
+      return res.status(502).json({
+        success: false,
+        message: "LeetCode is temporarily unreachable from our server. Please try again shortly.",
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: "Failed to fetch LeetCode stats",

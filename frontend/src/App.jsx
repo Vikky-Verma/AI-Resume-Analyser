@@ -12,6 +12,14 @@ import InterviewRoom from "./pages/InterviewRoom";
 import InterviewReport from "./pages/InterviewReport";
 import ATSChecker from "./pages/ATSChecker";
 import ProfileInsights from "./pages/ProfileInsights";
+import DsaInsights from "./pages/DsaInsights";
+import ProjectIntelligence from "./pages/ProjectIntelligence";
+import AiRoadmap from "./pages/AiRoadmap";
+import CompanyPrep from "./pages/CompanyPrep";
+import InternshipTracker from "./pages/InternshipTracker";
+import PortfolioBuilder from "./pages/PortfolioBuilder";
+import Progress from "./pages/Progress";
+import Pricing from "./pages/Pricing";
 
 function App() {
   return (
@@ -97,6 +105,77 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Nav label alias — reuses the existing ATS checker page */}
+          <Route
+            path="/resume-analysis"
+            element={
+              <ProtectedRoute>
+                <ATSChecker />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Future-phase placeholders (Phase 3, 4, 6) */}
+          <Route
+            path="/dsa-insights"
+            element={
+              <ProtectedRoute>
+                <DsaInsights />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project-intelligence"
+            element={
+              <ProtectedRoute>
+                <ProjectIntelligence />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ai-roadmap"
+            element={
+              <ProtectedRoute>
+                <AiRoadmap />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/company-prep"
+            element={
+              <ProtectedRoute>
+                <CompanyPrep />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/internship-tracker"
+            element={
+              <ProtectedRoute>
+                <InternshipTracker />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/portfolio-builder"
+            element={
+              <ProtectedRoute>
+                <PortfolioBuilder />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/progress"
+            element={
+              <ProtectedRoute>
+                <Progress />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Pricing is public — pre-purchase info, no login wall */}
+          <Route path="/pricing" element={<Pricing />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

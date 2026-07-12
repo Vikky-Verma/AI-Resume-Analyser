@@ -39,8 +39,8 @@ const DsaInsights = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `${API_BASE}/api/dsa/leetcode/${encodeURIComponent(username.trim())}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${API_BASE}/dsa/leetcode/${encodeURIComponent(username.trim())}`,
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setStats(res.data.data);
     } catch (err) {
@@ -82,7 +82,11 @@ const DsaInsights = () => {
             disabled={loading}
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white text-sm font-semibold transition-colors"
           >
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Search size={16} />
+            )}
             Fetch
           </button>
         </form>
@@ -109,14 +113,18 @@ const DsaInsights = () => {
                   <div className="flex items-center gap-1.5 justify-end text-slate-400 text-xs mb-1">
                     <Star size={13} /> Reputation
                   </div>
-                  <p className="font-semibold text-white">{stats.reputation ?? "—"}</p>
+                  <p className="font-semibold text-white">
+                    {stats.reputation ?? "—"}
+                  </p>
                 </div>
               </div>
             </div>
 
             <div>
               <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-3xl font-bold text-white">{stats.solved.total}</span>
+                <span className="text-3xl font-bold text-white">
+                  {stats.solved.total}
+                </span>
                 <span className="text-sm text-slate-500">problems solved</span>
               </div>
 

@@ -61,6 +61,9 @@ const fetchGithubStats = async (username) => {
     "User-Agent": "ai-resume-analyser",
     Accept: "application/vnd.github+json",
   };
+  if (process.env.GITHUB_TOKEN) {
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  }
 
   const profile = await safeFetchJson(`https://api.github.com/users/${username}`, { headers });
   if (!profile || profile.message === "Not Found") {

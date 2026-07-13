@@ -1,4 +1,4 @@
-const { getLeetCodeStats } = require("../services/dsaService");
+const { getLeetCodeStats, getCodeforcesStats } = require("../services/dsaService");
 
 const getLeetCode = async (req, res) => {
   try {
@@ -51,4 +51,46 @@ const getLeetCode = async (req, res) => {
   }
 };
 
-module.exports = { getLeetCode };
+const getCodeforces = async (req, res) => {
+  try {
+    const { handle } = req.params;
+
+    if (!handle || !handle.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Handle is required",
+      });
+    }
+
+    const stats = await getCodeforcesStats(handle.trim());
+
+    return res.status(200).json({
+      success: true,
+      platform: "codeforces",
+      data: stats,
+    });
+  } catch (error) {
+    console.log(error);
+
+    if (error.statusCode === 404) {
+      return res.status(404).json({
+        success: false,
+        message: "Codeforces user not found",
+      });
+    }
+
+    if (error.statusCode === 502) {
+      return res.status(502).json({
+        success: false,
+        message: "Codeforces is temporarily unreachable. Please try again shortly.",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch Codeforces stats",
+    });
+  }
+};
+
+module.exports = { getLeetCode, getCodeforces };

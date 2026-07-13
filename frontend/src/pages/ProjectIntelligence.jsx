@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import SkillBadge from "../components/SkillBadge";
@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Lightbulb,
   ShieldAlert,
+  FileText,
 } from "lucide-react";
 
 const STEPS = ["Uploading Resume", "Parsing Document", "Analyzing Projects"];
@@ -20,6 +21,33 @@ const ProjectIntelligence = () => {
   const [analyzing, setAnalyzing] = useState(false);
   const [step, setStep] = useState(0);
   const [result, setResult] = useState(null);
+
+  // ── Existing-resume picker (avoids duplicate uploads across sections) ──
+  const [existingResumes, setExistingResumes] = useState([]);
+  const [loadingResumes, setLoadingResumes] = useState(true);
+  const [useExisting, setUseExisting] = useState(true);
+  const [selectedResumeId, setSelectedResumeId] = useState(null);
+
+  useEffect(() => {
+    const fetchResumes = async () => {
+      try {
+        const { data } = await API.get("/resume/my-resumes");
+        const resumes = data.resumes || [];
+        setExistingResumes(resumes);
+        if (resumes.length > 0) {
+          setSelectedResumeId(resumes[0].id);
+          setUseExisting(true);
+        } else {
+          setUseExisting(false);
+        }
+      } catch {
+        setUseExisting(false);
+      } finally {
+        setLoadingResumes(false);
+      }
+    };
+    fetchResumes();
+  }, []);
 
   const handleFileChange = (f) => {
     const allowedTypes = [
@@ -34,7 +62,9 @@ const ProjectIntelligence = () => {
   };
 
   const handleAnalyze = async () => {
-    if (!file) {
+    const usingExisting = useExisting && selectedResumeId;
+
+    if (!usingExisting && !file) {
       toast.error("Please choose a resume file first");
       return;
     }
@@ -44,18 +74,24 @@ const ProjectIntelligence = () => {
     setResult(null);
 
     try {
-      const formData = new FormData();
-      formData.append("resume", file);
+      let finalResumeId = selectedResumeId;
 
-      const { data: uploadData } = await API.post("/resume/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      if (!usingExisting) {
+        const formData = new FormData();
+        formData.append("resume", file);
+
+        const { data: uploadData } = await API.post("/resume/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        finalResumeId = uploadData.resume.id;
+      }
 
       setStep(1);
-      await API.post(`/resume/parse/${uploadData.resume.id}`);
+      // Re-parse is cheap and guarantees extractedText is present either way
+      await API.post(`/resume/parse/${finalResumeId}`);
 
       setStep(2);
-      const { data } = await API.post(`/projects/${uploadData.resume.id}`);
+      const { data } = await API.post(`/projects/${finalResumeId}`);
 
       if (!data.success) {
         toast.error(data.message || "Analysis failed");
@@ -78,6 +114,7 @@ const ProjectIntelligence = () => {
   const reset = () => {
     setFile(null);
     setResult(null);
+    setStep(0);
   };
 
   return (
@@ -131,29 +168,78 @@ const ProjectIntelligence = () => {
             </div>
           ) : (
             <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-8 space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-slate-200 mb-2">
-                  Upload Resume (PDF or DOCX)
-                </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    id="project-intelligence-file-input"
-                    type="file"
-                    accept=".pdf,.docx"
-                    className="hidden"
-                    onChange={(e) => handleFileChange(e.target.files[0])}
-                  />
-                  <label
-                    htmlFor="project-intelligence-file-input"
-                    className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl cursor-pointer transition-all shrink-0"
-                  >
-                    Choose File
+              {!loadingResumes && existingResumes.length > 0 && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2.5">
+                    Use an uploaded resume
                   </label>
-                  <span className="text-slate-400 text-sm truncate">
-                    {file ? file.name : "No file chosen"}
-                  </span>
+                  <div className="space-y-2">
+                    {existingResumes.map((r) => (
+                      <label
+                        key={r.id}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                          useExisting && selectedResumeId === r.id
+                            ? "border-indigo-500 bg-indigo-950/20"
+                            : "border-[#232838] bg-[#1a1f2e]"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="existing-resume"
+                          checked={useExisting && selectedResumeId === r.id}
+                          onChange={() => {
+                            setUseExisting(true);
+                            setSelectedResumeId(r.id);
+                            setFile(null);
+                          }}
+                          className="accent-indigo-500"
+                        />
+                        <FileText size={14} className="text-indigo-400 shrink-0" />
+                        <span className="text-slate-200 text-sm truncate">
+                          {r.originalName}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setUseExisting(false)}
+                    className={`mt-2.5 text-xs font-semibold ${
+                      !useExisting
+                        ? "text-indigo-400"
+                        : "text-slate-500 hover:text-indigo-400"
+                    }`}
+                  >
+                    + Upload a new resume instead
+                  </button>
                 </div>
-              </div>
+              )}
+
+              {(!useExisting || existingResumes.length === 0) && (
+                <div>
+                  <label className="block text-sm font-semibold text-slate-200 mb-2">
+                    Upload Resume (PDF or DOCX)
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      id="project-intelligence-file-input"
+                      type="file"
+                      accept=".pdf,.docx"
+                      className="hidden"
+                      onChange={(e) => handleFileChange(e.target.files[0])}
+                    />
+                    <label
+                      htmlFor="project-intelligence-file-input"
+                      className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl cursor-pointer transition-all shrink-0"
+                    >
+                      Choose File
+                    </label>
+                    <span className="text-slate-400 text-sm truncate">
+                      {file ? file.name : "No file chosen"}
+                    </span>
+                  </div>
+                </div>
+              )}
 
               <button
                 type="button"

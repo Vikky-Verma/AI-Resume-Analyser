@@ -13,6 +13,7 @@ const atsRoutes = require("./routes/atsRoutes");
 const careerRoutes = require("./routes/careerRoutes");
 const interviewRoutes = require("./routes/interviewRoutes");
 const dsaRoutes = require("./routes/dsaRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 
 // ✅ PHASE 7 - PDF REPORT ROUTE ADDED
 const pdfRoutes = require("./routes/pdfRoutes");
@@ -56,6 +57,7 @@ app.use("/api/analysis", analysisRoutes);
 app.use("/api/ats", atsRoutes);
 app.use("/api/career", careerRoutes);
 app.use("/api/dsa", dsaRoutes);
+app.use("/api/projects", projectRoutes);
 
 // ✅ PHASE 7 ROUTE REGISTERED HERE
 app.use("/api/report", pdfRoutes);

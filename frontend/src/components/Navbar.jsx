@@ -23,7 +23,7 @@ import { useState, useRef, useEffect } from "react";
 const PREPARE_ITEMS = [
   { to: "/ats-checker", label: "ATS Checker", icon: FileText },
   { to: "/dsa-insights", label: "DSA Insights", icon: Code2 },
-  { to: "/project-intelligence", label: "Project Intelligence", icon: FolderGit2, soon: true },
+  { to: "/project-intelligence", label: "Project Intelligence", icon: FolderGit2 },
   { to: "/ai-roadmap", label: "AI Roadmap", icon: RouteIcon, soon: true },
   { to: "/interview", label: "Mock Interview", icon: Mic },
   { to: "/company-prep", label: "Company Prep", icon: Building2, soon: true },

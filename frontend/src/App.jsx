@@ -97,16 +97,6 @@ function App() {
             }
           />
 
-          {/* Nav label alias — reuses the existing ATS checker page */}
-          <Route
-            path="/resume-analysis"
-            element={
-              <ProtectedRoute>
-                <ATSChecker />
-              </ProtectedRoute>
-            }
-          />
-
           {/* Future-phase placeholders (Phase 3, 4, 6) */}
           <Route
             path="/dsa-insights"

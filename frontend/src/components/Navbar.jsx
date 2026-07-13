@@ -22,7 +22,6 @@ import { useState, useRef, useEffect } from "react";
 
 const PREPARE_ITEMS = [
   { to: "/resume-analysis", label: "Resume Analysis", icon: FileText },
-  { to: "/profile-insights", label: "Profile Insights", icon: Radar },
   { to: "/dsa-insights", label: "DSA Insights", icon: Code2 },
   { to: "/project-intelligence", label: "Project Intelligence", icon: FolderGit2, soon: true },
   { to: "/ai-roadmap", label: "AI Roadmap", icon: RouteIcon, soon: true },

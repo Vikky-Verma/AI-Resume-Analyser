@@ -11,7 +11,6 @@ import MockInterviewSetup from "./pages/MockInterviewSetup";
 import InterviewRoom from "./pages/InterviewRoom";
 import InterviewReport from "./pages/InterviewReport";
 import ATSChecker from "./pages/ATSChecker";
-import ProfileInsights from "./pages/ProfileInsights";
 import DsaInsights from "./pages/DsaInsights";
 import ProjectIntelligence from "./pages/ProjectIntelligence";
 import AiRoadmap from "./pages/AiRoadmap";
@@ -78,14 +77,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <ATSChecker />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile-insights"
-            element={
-              <ProtectedRoute>
-                <ProfileInsights />
               </ProtectedRoute>
             }
           />

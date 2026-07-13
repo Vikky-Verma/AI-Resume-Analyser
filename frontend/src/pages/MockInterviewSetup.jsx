@@ -98,6 +98,12 @@ const MockInterviewSetup = () => {
   const [dragOver, setDragOver] = useState(false);
   const [pendingFile, setPendingFile] = useState(null);
 
+  // ── Existing-resume picker (avoids duplicate uploads across sections) ──
+  const [existingResumes, setExistingResumes] = useState([]);
+  const [loadingResumes, setLoadingResumes] = useState(true);
+  const [useExisting, setUseExisting] = useState(true);
+  const [selectedResumeId, setSelectedResumeId] = useState(null);
+
   // Step 2: interview setup form
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
@@ -121,6 +127,27 @@ const MockInterviewSetup = () => {
       }
     };
     fetchInterviews();
+  }, []);
+
+  useEffect(() => {
+    const fetchResumes = async () => {
+      try {
+        const { data } = await API.get("/resume/my-resumes");
+        const resumes = data.resumes || [];
+        setExistingResumes(resumes);
+        if (resumes.length > 0) {
+          setSelectedResumeId(resumes[0].id);
+          setUseExisting(true);
+        } else {
+          setUseExisting(false);
+        }
+      } catch {
+        setUseExisting(false);
+      } finally {
+        setLoadingResumes(false);
+      }
+    };
+    fetchResumes();
   }, []);
 
   useEffect(() => {
@@ -148,26 +175,35 @@ const MockInterviewSetup = () => {
   };
 
   const handleUpload = async () => {
-    if (!pendingFile) {
+    const usingExisting = useExisting && selectedResumeId;
+
+    if (!usingExisting && !pendingFile) {
       toast.error("Choose a resume file first");
       return;
     }
-    const formData = new FormData();
-    formData.append("resume", pendingFile);
+
     setUploading(true);
-
     try {
-      const { data } = await API.post("/resume/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      let resume;
 
-      // Parse immediately so the interview can be generated from it
-      await API.post(`/resume/parse/${data.resume.id}`);
+      if (usingExisting) {
+        resume = existingResumes.find((r) => r.id === selectedResumeId);
+      } else {
+        const formData = new FormData();
+        formData.append("resume", pendingFile);
+        const { data } = await API.post("/resume/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        resume = data.resume;
+      }
 
-      setUploadedResume(data.resume);
+      // Re-parse is cheap and guarantees extractedText is present either way
+      await API.post(`/resume/parse/${resume.id}`);
+
+      setUploadedResume(resume);
       toast.success("Resume ready!");
     } catch {
-      toast.error("Upload failed. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -340,6 +376,52 @@ const MockInterviewSetup = () => {
                       PDF or DOCX — we'll build your interview from it.
                     </p>
 
+                    {!loadingResumes && existingResumes.length > 0 && (
+                      <div className="mb-6">
+                        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2.5">
+                          Use an uploaded resume
+                        </label>
+                        <div className="space-y-2">
+                          {existingResumes.map((r) => (
+                            <label
+                              key={r.id}
+                              className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                                useExisting && selectedResumeId === r.id
+                                  ? "border-violet-500 bg-violet-950/20"
+                                  : "border-[#22262f] bg-[#12141a]"
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="existing-resume"
+                                checked={useExisting && selectedResumeId === r.id}
+                                onChange={() => {
+                                  setUseExisting(true);
+                                  setSelectedResumeId(r.id);
+                                  setPendingFile(null);
+                                }}
+                                className="accent-violet-500"
+                              />
+                              <FileText size={14} className="text-violet-400 shrink-0" />
+                              <span className="text-slate-200 text-sm truncate">
+                                {r.originalName}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setUseExisting(false)}
+                          className={`mt-2.5 text-xs font-semibold ${
+                            !useExisting ? "text-violet-400" : "text-slate-500 hover:text-violet-400"
+                          }`}
+                        >
+                          + Upload a new resume instead
+                        </button>
+                      </div>
+                    )}
+
+                    {(!useExisting || existingResumes.length === 0) && (
                     <div
                       onDragOver={(e) => {
                         e.preventDefault();
@@ -405,11 +487,12 @@ const MockInterviewSetup = () => {
                         </div>
                       )}
                     </div>
+                    )}
 
                     <button
                       type="button"
                       onClick={handleUpload}
-                      disabled={!pendingFile || uploading}
+                      disabled={(useExisting ? !selectedResumeId : !pendingFile) || uploading}
                       className="mt-5 w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-violet-500 hover:bg-violet-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-all"
                     >
                       {uploading ? (

@@ -31,7 +31,16 @@ const getLeetCode = async (req, res) => {
     if (error.statusCode === 502) {
       return res.status(502).json({
         success: false,
-        message: "LeetCode is temporarily unreachable from our server. Please try again shortly.",
+        message:
+          "LeetCode is temporarily unreachable from our server. Please try again shortly.",
+      });
+    }
+
+    if (error.statusCode === 429) {
+      return res.status(429).json({
+        success: false,
+        message:
+          "LeetCode is receiving too many requests right now. Please wait a minute and try again.",
       });
     }
 

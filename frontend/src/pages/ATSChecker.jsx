@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import SkillBadge from "../components/SkillBadge";
@@ -121,10 +121,37 @@ const ATSChecker = () => {
   const [resumeId, setResumeId] = useState(null);
   const [dragOver, setDragOver] = useState(false);
 
+  // ── Existing-resume picker (avoids duplicate uploads across sections) ──
+  const [existingResumes, setExistingResumes] = useState([]);
+  const [loadingResumes, setLoadingResumes] = useState(true);
+  const [useExisting, setUseExisting] = useState(true);
+  const [selectedResumeId, setSelectedResumeId] = useState(null);
+
   // Job Description Match (folded in from the old Resume Analysis page)
   const [jobDesc, setJobDesc] = useState("");
   const [jobMatch, setJobMatch] = useState(null);
   const [matching, setMatching] = useState(false);
+
+  useEffect(() => {
+    const fetchResumes = async () => {
+      try {
+        const { data } = await API.get("/resume/my-resumes");
+        const resumes = data.resumes || [];
+        setExistingResumes(resumes);
+        if (resumes.length > 0) {
+          setSelectedResumeId(resumes[0].id);
+          setUseExisting(true);
+        } else {
+          setUseExisting(false);
+        }
+      } catch {
+        setUseExisting(false);
+      } finally {
+        setLoadingResumes(false);
+      }
+    };
+    fetchResumes();
+  }, []);
 
   const handleFileChange = (f) => {
     const allowedTypes = [
@@ -143,7 +170,9 @@ const ATSChecker = () => {
   };
 
   const handleAnalyze = async () => {
-    if (!file) {
+    const usingExisting = useExisting && selectedResumeId;
+
+    if (!usingExisting && !file) {
       toast.error("Please choose a resume file first");
       return;
     }
@@ -153,18 +182,24 @@ const ATSChecker = () => {
     setJobMatch(null);
 
     try {
-      const formData = new FormData();
-      formData.append("resume", file);
+      let finalResumeId = selectedResumeId;
 
-      const { data: uploadData } = await API.post(
-        "/resume/upload",
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      if (!usingExisting) {
+        const formData = new FormData();
+        formData.append("resume", file);
 
-      await API.post(`/resume/parse/${uploadData.resume.id}`);
+        const { data: uploadData } = await API.post(
+          "/resume/upload",
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+        finalResumeId = uploadData.resume.id;
+      }
 
-      const { data } = await API.post(`/ats/${uploadData.resume.id}`, {
+      // Re-parse is cheap and guarantees extractedText is present either way
+      await API.post(`/resume/parse/${finalResumeId}`);
+
+      const { data } = await API.post(`/ats/${finalResumeId}`, {
         targetRole,
         experienceLevel,
       });
@@ -175,7 +210,7 @@ const ATSChecker = () => {
         return;
       }
 
-      setResumeId(uploadData.resume.id);
+      setResumeId(finalResumeId);
       setResult(data);
     } catch (err) {
       toast.error(
@@ -350,6 +385,52 @@ const ATSChecker = () => {
                       PDF or DOCX — takes about 20 seconds.
                     </p>
 
+                    {!loadingResumes && existingResumes.length > 0 && (
+                      <div className="mb-6">
+                        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2.5">
+                          Use an uploaded resume
+                        </label>
+                        <div className="space-y-2">
+                          {existingResumes.map((r) => (
+                            <label
+                              key={r.id}
+                              className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                                useExisting && selectedResumeId === r.id
+                                  ? "border-teal-500 bg-teal-950/20"
+                                  : "border-[#22262f] bg-[#12141a]"
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="existing-resume"
+                                checked={useExisting && selectedResumeId === r.id}
+                                onChange={() => {
+                                  setUseExisting(true);
+                                  setSelectedResumeId(r.id);
+                                  setFile(null);
+                                }}
+                                className="accent-teal-500"
+                              />
+                              <FileText size={14} className="text-teal-400 shrink-0" />
+                              <span className="text-slate-200 text-sm truncate">
+                                {r.originalName}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setUseExisting(false)}
+                          className={`mt-2.5 text-xs font-semibold ${
+                            !useExisting ? "text-teal-400" : "text-slate-500 hover:text-teal-400"
+                          }`}
+                        >
+                          + Upload a new resume instead
+                        </button>
+                      </div>
+                    )}
+
+                    {(!useExisting || existingResumes.length === 0) && (
                     <div
                       onDragOver={(e) => {
                         e.preventDefault();
@@ -418,6 +499,7 @@ const ATSChecker = () => {
                         </div>
                       )}
                     </div>
+                    )}
 
                     <div className="mt-6">
                       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2.5">
@@ -457,7 +539,7 @@ const ATSChecker = () => {
                     <button
                       type="button"
                       onClick={handleAnalyze}
-                      disabled={analyzing || !file}
+                      disabled={analyzing || (useExisting ? !selectedResumeId : !file)}
                       className="w-full mt-7 flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-teal-500 to-indigo-500 hover:from-teal-600 hover:to-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-full transition-all"
                     >
                       {analyzing ? (

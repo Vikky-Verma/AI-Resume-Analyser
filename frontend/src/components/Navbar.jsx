@@ -26,7 +26,7 @@ const PREPARE_ITEMS = [
   { to: "/project-intelligence", label: "Project Intelligence", icon: FolderGit2 },
   { to: "/ai-roadmap", label: "AI Roadmap", icon: RouteIcon },
   { to: "/interview", label: "Mock Interview", icon: Mic },
-  { to: "/company-prep", label: "Company Prep", icon: Building2, soon: true },
+  { to: "/company-prep", label: "Company Prep", icon: Building2 },
 ];
 
 const TRACK_ITEMS = [

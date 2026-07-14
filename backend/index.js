@@ -16,6 +16,7 @@ const dsaRoutes = require("./routes/dsaRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const roadmapRoutes = require("./routes/roadmapRoutes");
 const companyPrepRoutes = require("./routes/companyPrepRoutes");
+const applicationRoutes = require("./routes/applicationRoutes");
 
 // ✅ PHASE 7 - PDF REPORT ROUTE ADDED
 const pdfRoutes = require("./routes/pdfRoutes");
@@ -62,6 +63,7 @@ app.use("/api/dsa", dsaRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/roadmap", roadmapRoutes);
 app.use("/api/company-prep", companyPrepRoutes); 
+app.use("/api/applications", applicationRoutes);
 
 // ✅ PHASE 7 ROUTE REGISTERED HERE
 app.use("/api/report", pdfRoutes);

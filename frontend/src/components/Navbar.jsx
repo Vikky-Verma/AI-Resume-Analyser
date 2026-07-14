@@ -24,7 +24,7 @@ const PREPARE_ITEMS = [
   { to: "/ats-checker", label: "ATS Checker", icon: FileText },
   { to: "/dsa-insights", label: "DSA Insights", icon: Code2 },
   { to: "/project-intelligence", label: "Project Intelligence", icon: FolderGit2 },
-  { to: "/ai-roadmap", label: "AI Roadmap", icon: RouteIcon, soon: true },
+  { to: "/ai-roadmap", label: "AI Roadmap", icon: RouteIcon },
   { to: "/interview", label: "Mock Interview", icon: Mic },
   { to: "/company-prep", label: "Company Prep", icon: Building2, soon: true },
 ];
@@ -32,7 +32,7 @@ const PREPARE_ITEMS = [
 const TRACK_ITEMS = [
   { to: "/internship-tracker", label: "Internship Tracker", icon: KanbanSquare, soon: true },
   { to: "/portfolio-builder", label: "Portfolio Builder", icon: Layout, soon: true },
-  { to: "/progress", label: "Progress", icon: Trophy, soon: true },
+  { to: "/progress", label: "Progress", icon: Trophy },
 ];
 
 const SoonBadge = () => (

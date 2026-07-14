@@ -50,9 +50,27 @@ model User {
   
   resume    Resume[]
   mockInterviews MockInterview[]
+  companyProgress CompanyPrepProgress[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CompanyPrepProgress {
+  id          String   @id @default(cuid())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  company     String   // company slug, e.g. "google"
+
+  // question ids (e.g. "google-1") the user has marked as solved
+  solvedIds   String[]
+
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, company])
 }
 
 model MockInterview {

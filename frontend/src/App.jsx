@@ -15,6 +15,7 @@ import DsaInsights from "./pages/DsaInsights";
 import ProjectIntelligence from "./pages/ProjectIntelligence";
 import AiRoadmap from "./pages/AiRoadmap";
 import CompanyPrep from "./pages/CompanyPrep";
+import CompanyPrepDetail from "./pages/CompanyPrepDetail";
 import InternshipTracker from "./pages/InternshipTracker";
 import PortfolioBuilder from "./pages/PortfolioBuilder";
 import Progress from "./pages/Progress";
@@ -127,6 +128,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CompanyPrep />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/company-prep/:slug"
+            element={
+              <ProtectedRoute>
+                <CompanyPrepDetail />
               </ProtectedRoute>
             }
           />

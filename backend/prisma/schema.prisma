@@ -52,6 +52,7 @@ model User {
   mockInterviews MockInterview[]
   companyProgress CompanyPrepProgress[]
   applications    Application[]
+  portfolio       Portfolio?
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -78,6 +79,30 @@ model Application {
 
   // Order within its status column (drag-and-drop position)
   position    Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Portfolio {
+  id          String   @id @default(cuid())
+
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+
+  slug        String   @unique
+
+  headline    String?
+  bio         String?
+  skills      String[]
+
+  // Array of { name, techStack: [], description, link, github }
+  projects    Json     @default("[]")
+
+  // { github, linkedin, website, twitter }
+  links       Json     @default("{}")
+
+  isPublic    Boolean  @default(false)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

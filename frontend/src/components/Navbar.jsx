@@ -31,7 +31,7 @@ const PREPARE_ITEMS = [
 
 const TRACK_ITEMS = [
   { to: "/internship-tracker", label: "Internship Tracker", icon: KanbanSquare  },
-  { to: "/portfolio-builder", label: "Portfolio Builder", icon: Layout, soon: true },
+  { to: "/portfolio-builder", label: "Portfolio Builder", icon: Layout },
   { to: "/progress", label: "Progress", icon: Trophy },
 ];
 

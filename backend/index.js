@@ -17,6 +17,7 @@ const projectRoutes = require("./routes/projectRoutes");
 const roadmapRoutes = require("./routes/roadmapRoutes");
 const companyPrepRoutes = require("./routes/companyPrepRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
+const portfolioRoutes = require("./routes/portfolioRoutes");
 
 // ✅ PHASE 7 - PDF REPORT ROUTE ADDED
 const pdfRoutes = require("./routes/pdfRoutes");
@@ -64,6 +65,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/roadmap", roadmapRoutes);
 app.use("/api/company-prep", companyPrepRoutes); 
 app.use("/api/applications", applicationRoutes);
+app.use("/api/portfolio", portfolioRoutes);
 
 // ✅ PHASE 7 ROUTE REGISTERED HERE
 app.use("/api/report", pdfRoutes);

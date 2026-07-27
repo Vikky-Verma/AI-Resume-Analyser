@@ -20,6 +20,7 @@ import InternshipTracker from "./pages/InternshipTracker";
 import PortfolioBuilder from "./pages/PortfolioBuilder";
 import Progress from "./pages/Progress";
 import Pricing from "./pages/Pricing";
+import PortfolioPublic from "./pages/PortfolioPublic";
 
 function App() {
   return (
@@ -166,6 +167,8 @@ function App() {
 
           {/* Pricing is public — pre-purchase info, no login wall */}
           <Route path="/pricing" element={<Pricing />} />
+          {/* Public portfolio pages — shareable with recruiters, no login wall */}
+          <Route path="/portfolio/:slug" element={<PortfolioPublic />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

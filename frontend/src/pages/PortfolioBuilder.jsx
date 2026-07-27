@@ -10,10 +10,10 @@ import {
   Copy,
   ExternalLink,
   Sparkles,
-  Github,
-  Linkedin,
+  Code2,
+  Briefcase,
   Globe,
-  Twitter,
+  AtSign,
   Save,
 } from "lucide-react";
 
@@ -372,7 +372,7 @@ const PortfolioBuilder = () => {
           <label className="text-[11px] font-medium text-slate-500 mb-1.5 block">Links</label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="flex items-center gap-2 bg-[#12141c] border border-[#20222c] rounded-lg px-3 focus-within:border-indigo-500/60">
-              <Github size={14} className="text-slate-500 shrink-0" />
+              <Code2 size={14} className="text-slate-500 shrink-0" />
               <input
                 type="text"
                 value={portfolio.links?.github || ""}
@@ -382,7 +382,7 @@ const PortfolioBuilder = () => {
               />
             </div>
             <div className="flex items-center gap-2 bg-[#12141c] border border-[#20222c] rounded-lg px-3 focus-within:border-indigo-500/60">
-              <Linkedin size={14} className="text-slate-500 shrink-0" />
+              <Briefcase size={14} className="text-slate-500 shrink-0" />
               <input
                 type="text"
                 value={portfolio.links?.linkedin || ""}
@@ -402,7 +402,7 @@ const PortfolioBuilder = () => {
               />
             </div>
             <div className="flex items-center gap-2 bg-[#12141c] border border-[#20222c] rounded-lg px-3 focus-within:border-indigo-500/60">
-              <Twitter size={14} className="text-slate-500 shrink-0" />
+              <AtSign size={14} className="text-slate-500 shrink-0" />
               <input
                 type="text"
                 value={portfolio.links?.twitter || ""}

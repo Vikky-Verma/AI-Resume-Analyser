@@ -3,10 +3,10 @@ import { useParams, Link } from "react-router-dom";
 import API from "../api/axios";
 import {
   Loader2,
-  Github,
-  Linkedin,
+  Code2,
+  Briefcase,
   Globe,
-  Twitter,
+  AtSign,
   ExternalLink,
   FileQuestion,
   Sparkles,
@@ -23,10 +23,10 @@ const avatarColor = (name = "") => {
 };
 
 const LINK_META = {
-  github: { icon: Github, label: "GitHub" },
-  linkedin: { icon: Linkedin, label: "LinkedIn" },
+  github: { icon: Code2, label: "GitHub" },
+  linkedin: { icon: Briefcase, label: "LinkedIn" },
   website: { icon: Globe, label: "Website" },
-  twitter: { icon: Twitter, label: "Twitter" },
+  twitter: { icon: AtSign, label: "Twitter" },
 };
 
 const normalizeUrl = (url) => {
@@ -165,7 +165,7 @@ const PortfolioPublic = () => {
                     <div className="flex items-center gap-2 shrink-0">
                       {project.github && (
                         <a href={normalizeUrl(project.github)} target="_blank" rel="noreferrer" className="text-slate-500 hover:text-white">
-                          <Github size={13} />
+                          <Code2 size={13} />
                         </a>
                       )}
                       {project.link && (

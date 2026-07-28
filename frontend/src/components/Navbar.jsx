@@ -17,7 +17,7 @@ import {
   Layout,
   Trophy,
   LayoutDashboard,
-  FileEdit,
+  FilePlus2,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
@@ -32,7 +32,7 @@ const PREPARE_ITEMS = [
 
 const TRACK_ITEMS = [
   { to: "/internship-tracker", label: "Internship Tracker", icon: KanbanSquare  },
-  { to: "/resume-builder", label: "Resume Builder", icon: FileEdit },
+  { to: "/resume-builder", label: "Resume Builder", icon: FilePlus2 },
   { to: "/portfolio-builder", label: "Portfolio Builder", icon: Layout },
   { to: "/progress", label: "Progress", icon: Trophy },
 ];

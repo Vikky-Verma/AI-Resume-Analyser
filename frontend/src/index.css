@@ -14,3 +14,28 @@ body {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: #0f1117; }
 ::-webkit-scrollbar-thumb { background: #2e3150; border-radius: 4px; }
+
+/* Resume Builder: "Download PDF" uses window.print(). These rules make sure
+   only the #resume-to-print element is visible/printed, at A4 proportions. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #resume-to-print,
+  #resume-to-print * {
+    visibility: visible;
+  }
+  #resume-to-print {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    min-height: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+  @page {
+    size: A4;
+    margin: 0;
+  }
+}

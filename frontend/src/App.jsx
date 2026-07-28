@@ -18,6 +18,7 @@ import CompanyPrep from "./pages/CompanyPrep";
 import CompanyPrepDetail from "./pages/CompanyPrepDetail";
 import InternshipTracker from "./pages/InternshipTracker";
 import PortfolioBuilder from "./pages/PortfolioBuilder";
+import ResumeBuilder from "./pages/ResumeBuilder";
 import Progress from "./pages/Progress";
 import Pricing from "./pages/Pricing";
 import PortfolioPublic from "./pages/PortfolioPublic";
@@ -145,6 +146,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <InternshipTracker />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume-builder"
+            element={
+              <ProtectedRoute>
+                <ResumeBuilder />
               </ProtectedRoute>
             }
           />

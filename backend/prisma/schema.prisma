@@ -53,6 +53,7 @@ model User {
   companyProgress CompanyPrepProgress[]
   applications    Application[]
   portfolio       Portfolio?
+  builderResumes  BuilderResume[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,6 +104,45 @@ model Portfolio {
   links       Json     @default("{}")
 
   isPublic    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BuilderResume {
+  id          String   @id @default(cuid())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  title       String   @default("Untitled Resume")
+
+  // Which visual template + which company preset was used to build this
+  templateId  String   @default("classic")
+  companyId   String   @default("general")
+
+  // { fullName, role, email, phone, location, linkedin, github, website }
+  personalInfo Json    @default("{}")
+
+  summary     String?  @default("")
+
+  // [{ id, role, company, location, startDate, endDate, current, bullets: [] }]
+  experience  Json     @default("[]")
+
+  // [{ id, school, degree, field, startDate, endDate, gpa }]
+  education   Json     @default("[]")
+
+  // [{ id, name, techStack: [], description, bullets: [], link, github }]
+  projects    Json     @default("[]")
+
+  // [{ id, category, items: [] }]
+  skills      Json     @default("[]")
+
+  // [{ id, text }]
+  achievements Json    @default("[]")
+
+  // [{ id, name, issuer, date }]
+  certifications Json  @default("[]")
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

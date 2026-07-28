@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Linkedin, Github, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Link2, Code2, Globe } from "lucide-react";
 import { getTemplate } from "../../data/resumeTemplates";
 
 const fmtRange = (start, end, current) =>
@@ -9,8 +9,8 @@ const ContactRow = ({ personalInfo, dense }) => {
     personalInfo.location && { icon: MapPin, text: personalInfo.location },
     personalInfo.email && { icon: Mail, text: personalInfo.email },
     personalInfo.phone && { icon: Phone, text: personalInfo.phone },
-    personalInfo.linkedin && { icon: Linkedin, text: personalInfo.linkedin },
-    personalInfo.github && { icon: Github, text: personalInfo.github },
+    personalInfo.linkedin && { icon: Link2, text: personalInfo.linkedin },
+    personalInfo.github && { icon: Code2, text: personalInfo.github },
     personalInfo.website && { icon: Globe, text: personalInfo.website },
   ].filter(Boolean);
 

@@ -1,7 +1,16 @@
 const pdf = require("pdf-parse");
 const fs = require("fs");
 const axios = require("axios");
-const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
+
+// pdfjs-dist v5+ is ESM-only (no more CJS "legacy/build/pdf.js" export),
+// so we lazy-load it once via dynamic import() and cache the module.
+let pdfjsLibPromise = null;
+const getPdfjsLib = () => {
+  if (!pdfjsLibPromise) {
+    pdfjsLibPromise = import("pdfjs-dist/legacy/build/pdf.mjs");
+  }
+  return pdfjsLibPromise;
+};
 
 // Extracts real embedded hyperlinks (e.g. GitHub/LinkedIn icons or
 // custom-labelled links) that pdf-parse's plain-text extraction misses,
@@ -9,6 +18,7 @@ const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
 // clickable URL.
 const extractEmbeddedLinks = async (dataBuffer) => {
   try {
+    const pdfjsLib = await getPdfjsLib();
     const data = new Uint8Array(dataBuffer);
     const doc = await pdfjsLib.getDocument({ data }).promise;
     const urls = [];

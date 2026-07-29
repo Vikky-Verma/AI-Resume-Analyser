@@ -1,26 +1,46 @@
-# 🚀 AlgoVerse — AI-Powered Placement Platform
+# 🚀 AlgoVerse — AI-Powered Placement Readiness Platform
 
-> An intelligent full-stack placement-readiness platform that provides ATS scoring, resume analysis, skill gap analysis, career roadmap generation, and job description matching for **all professional domains** — Software, Electronics, Medical, Finance, Management, Civil, Marketing, Education, and more.
+![CI](https://github.com/Vikky-Verma/AI-Resume-Analyser/actions/workflows/ci.yml/badge.svg)
 
-🔗 **Live Demo:** [https://ai-resume-analyser-chi-ten.vercel.app](https://ai-resume-analyser-chi-ten.vercel.app)  
-🔗 **Backend API:** [https://ai-resume-analyser-backend-rllt.onrender.com](https://ai-resume-analyser-backend-rllt.onrender.com)  
-🔗 **GitHub:** [https://github.com/Vikky-Verma/AI-Resume-Analyser](https://github.com/Vikky-Verma/AI-Resume-Analyser)
+> A full-stack placement-readiness platform — resume analysis, ATS scoring, career roadmaps, job-match scoring, mock interviews, DSA progress tracking, application tracking, and a portfolio builder — for **any professional domain**, not just software.
+
+🔗 **Live Demo:** [ai-resume-analyser-chi-ten.vercel.app](https://ai-resume-analyser-chi-ten.vercel.app)
+🔗 **Backend API:** [ai-resume-analyser-backend-rllt.onrender.com](https://ai-resume-analyser-backend-rllt.onrender.com)
+🔗 **GitHub:** [github.com/Vikky-Verma/AI-Resume-Analyser](https://github.com/Vikky-Verma/AI-Resume-Analyser)
 
 ---
 
 ## 📸 Features
 
-- 🔐 **User Authentication** — Register, Login with JWT-based auth
-- 📄 **Resume Upload** — Supports PDF and DOCX formats
-- 🧠 **AI Resume Analysis** — Strict ATS scoring across all professional domains
-- 📊 **Resume Score** — 6-dimension scoring: Impact, Domain Depth, Structure, Completeness, Keywords, Career Narrative
-- 🎯 **ATS Score** — Real ATS compatibility score with detailed deductions
-- 💡 **Smart Suggestions** — 5 specific, actionable suggestions with example rewrites
-- 🔍 **Missing Skills** — 6-8 high-demand missing skills for detected domain
-- 🗺️ **Career Roadmap** — Domain-specific career advice and learning path
-- 💼 **Job Description Match** — Match resume against any job description
-- 📥 **PDF Report** — Download professional analysis report
-- 🗑️ **Resume Management** — Upload, view, and delete resumes
+- 🔐 **Authentication** — JWT-based register/login, password strength enforced via Zod, rate-limited against brute force
+- 📄 **Resume Upload & Parsing** — PDF/DOCX, stored on Cloudinary, text + embedded-link extraction
+- 🧠 **AI Resume Analysis** — 6-dimension scoring (Impact, Domain Depth, Structure, Completeness, Keywords, Career Narrative) via Cloudflare Workers AI (Llama 3.1 70B)
+- 🎯 **ATS Score** — Compatibility score with itemized deductions
+- 💼 **Job Description Matching** — Match a resume against any JD, see gaps
+- 🗺️ **Career Roadmap Generator** — Domain-specific, timeframe-based learning path
+- 🧩 **Project Intelligence** — Analyzes listed projects, suggests improvements
+- 🎤 **Mock Interviews** — HR / Technical / DSA round simulation with AI feedback
+- 📈 **DSA & Progress Tracking** — Track problem-solving progress over time
+- 📋 **Application Tracker** — Track job applications end-to-end
+- 🧱 **Resume Builder** — Build a resume from structured input
+- 🌐 **Portfolio Builder** — Auto-generate a portfolio from an existing resume
+- 🏢 **Company Prep** — Company-specific interview prep tracking
+- 📥 **PDF Report Export** — Download a full analysis report
+
+---
+
+## 🔒 Security & Engineering Practices
+
+This project went through a deliberate security-hardening pass — not just feature-building:
+
+- **Access control** — Found and fixed broken object-level authorization (IDOR) across every resource-by-id endpoint (analysis, ATS, career, PDF report, projects, roadmap, resume parsing). Centralized into a single `getOwnedResume()` helper instead of repeating the check per controller. Covered by automated tests.
+- **Input validation** — Zod schemas on auth routes (email format, password complexity) instead of trusting raw request bodies.
+- **Rate limiting** — IP-based limiting on `/register` and `/login` to blunt credential stuffing and spam registration.
+- **Secrets & data hygiene** — Purged accidentally-committed user resume files from full git history (not just the working tree); static file serving replaced with an ownership-checked route, then removed entirely once storage fully moved to Cloudinary.
+- **Centralized error handling** — All errors flow through one `AppError` + `errorHandler` middleware; operational errors return clean messages, unexpected errors are logged server-side without leaking stack traces to clients.
+- **Automated testing** — Jest + Supertest suite covering registration/login validation and the IDOR fix, with Prisma mocked so tests run without a live database. `app.js`/`index.js` are split specifically to make this possible.
+- **CI** — GitHub Actions runs the full test suite on every push and pull request against `main`.
+- **Dependency hygiene** — Resolved all `npm audit` findings reachable from the actual runtime path (Cloudinary SDK, pdfjs-dist), including two deliberate major-version upgrades, each manually verified against the upload/parse/delete flows before merging.
 
 ---
 
@@ -42,24 +62,28 @@
 | Node.js + Express | Backend server |
 | Prisma ORM | Database ORM |
 | PostgreSQL (Neon) | Database |
-| JWT | Authentication |
+| JWT + bcrypt | Authentication |
+| Zod | Request validation |
+| express-rate-limit | Auth rate limiting |
 | Multer + Cloudinary | File upload & storage |
-| pdf-parse | PDF text extraction |
+| pdf-parse + pdfjs-dist | PDF text & link extraction |
 | Mammoth | DOCX text extraction |
 | PDFKit | PDF report generation |
+| Jest + Supertest | Testing |
 
 ### AI Services
 | Service | Purpose |
 |---|---|
-| Cloudflare Workers AI (Llama 3.1 70B) | All AI analysis, scoring, and suggestions — free, no daily limit |
+| Cloudflare Workers AI (Llama 3.1 70B) | Resume analysis, scoring, suggestions, roadmap generation, mock interview feedback |
 
-### Deployment
+### Deployment & CI
 | Service | Purpose |
 |---|---|
 | Vercel | Frontend hosting |
 | Render | Backend hosting |
 | Neon | PostgreSQL database |
 | Cloudinary | File storage |
+| GitHub Actions | CI — automated tests on every push/PR |
 
 ---
 
@@ -67,53 +91,44 @@
 
 ```
 AI-Resume-Analyser/
+├── .github/workflows/ci.yml
 ├── frontend/
-│   ├── src/
-│   │   ├── api/
-│   │   │   └── axios.js
-│   │   ├── components/
-│   │   │   └── Navbar.jsx
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx
-│   │   ├── pages/
-│   │   │   ├── Login.jsx
-│   │   │   ├── Register.jsx
-│   │   │   ├── Dashboard.jsx
-│   │   │   └── ResumeAnalysis.jsx
-│   │   └── main.jsx
-│   ├── .env
-│   └── package.json
+│   └── src/
+│       ├── api/axios.js
+│       ├── components/        # Navbar, ScoreCard, SkillBadge, ProtectedRoute
+│       ├── context/AuthContext.jsx
+│       └── pages/              # Login, Register, Dashboard, ResumeDetail,
+│                                # MockInterviewSetup, InterviewRoom, InterviewReport
 │
 ├── backend/
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── resumeController.js
-│   │   ├── analysisController.js
-│   │   ├── careerController.js
-│   │   ├── atsController.js
-│   │   └── pdfController.js
-│   ├── routes/
-│   │   ├── authRoutes.js
-│   │   ├── resumeRoutes.js
-│   │   ├── analysisRoutes.js
-│   │   ├── careerRoutes.js
-│   │   ├── atsRoutes.js
-│   │   └── pdfRoutes.js
-│   ├── services/
-│   │   ├── aiAnalysisService.js
-│   │   └── careerService.js
+│   ├── controllers/            # 14 controllers — resume, analysis, ATS, career,
+│   │                            # roadmap, project, interview, DSA, application,
+│   │                            # portfolio, builder-resume, company-prep, progress, PDF
+│   ├── routes/                 # one route file per controller
+│   ├── services/                # AI analysis, career, ATS, roadmap, interview,
+│   │                            # portfolio, PDF generation, etc.
 │   ├── middleware/
 │   │   ├── authMiddleware.js
-│   │   └── uploadMiddleware.js
+│   │   ├── errorHandler.js     # global error handler
+│   │   ├── rateLimiter.js      # auth rate limiting
+│   │   ├── uploadMiddleware.js # Cloudinary storage config
+│   │   └── validate.js         # generic Zod validation middleware
+│   ├── validators/
+│   │   └── authValidator.js
 │   ├── utils/
-│   │   ├── prisma.js
+│   │   ├── AppError.js
+│   │   ├── asyncHandler.js
+│   │   ├── getOwnedResume.js   # centralized ownership check (IDOR fix)
 │   │   ├── pdfParser.js
 │   │   ├── docxParser.js
-│   │   └── geminiClient.js
-│   ├── prisma/
-│   │   └── schema.prisma
-│   ├── .env
-│   └── index.js
+│   │   └── prisma.js
+│   ├── __tests__/
+│   │   ├── auth.test.js
+│   │   └── access-control.test.js
+│   ├── prisma/schema.prisma
+│   ├── app.js                  # Express app (testable, no .listen())
+│   ├── index.js                 # entry point — connects DB, starts server
+│   └── .env.example
 ```
 
 ---
@@ -121,9 +136,8 @@ AI-Resume-Analyser/
 ## 🚀 Getting Started
 
 ### Prerequisites
-
 - Node.js v18+
-- npm or yarn
+- npm
 - Git
 
 ### 1. Clone the repository
@@ -133,52 +147,25 @@ git clone https://github.com/Vikky-Verma/AI-Resume-Analyser.git
 cd AI-Resume-Analyser
 ```
 
-### 2. Setup Backend
+### 2. Backend setup
 
 ```bash
 cd backend
 npm install
+cp .env.example .env   # then fill in your actual values
 ```
 
-Create `backend/.env`:
-
-```env
-# Database (Neon PostgreSQL)
-DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
-
-# JWT
-JWT_SECRET=your_jwt_secret_key
-
-# Server
-PORT=8000
-NODE_ENV=development
-
-# Cloudinary (File Storage)
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# AI Service
-CLOUDFLARE_ACCOUNT_ID=your_account_id
-CLOUDFLARE_API_TOKEN=your_api_token
-```
-
-Run database migrations:
+Run migrations and start:
 
 ```bash
 npx prisma migrate dev
 npx prisma generate
-```
-
-Start backend:
-
-```bash
 npm run dev
 ```
 
-Backend runs at: `http://localhost:8000`
+Backend runs at `http://localhost:8000`.
 
-### 3. Setup Frontend
+### 3. Frontend setup
 
 ```bash
 cd frontend
@@ -191,91 +178,74 @@ Create `frontend/.env`:
 VITE_API_URL=http://localhost:8000/api
 ```
 
-Start frontend:
-
 ```bash
 npm run dev
 ```
 
-Frontend runs at: `http://localhost:5173`
+Frontend runs at `http://localhost:5173`.
+
+### 4. Run tests
+
+```bash
+cd backend
+npm test
+```
 
 ---
 
-## 🔌 API Endpoints
+## 🔌 API Endpoints (core)
 
 ### Auth
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login user |
+| POST | `/api/auth/register` | Register (validated, rate-limited) |
+| POST | `/api/auth/login` | Login (rate-limited) |
 
 ### Resume
 | Method | Endpoint | Description |
 |---|---|---|
 | POST | `/api/resume/upload` | Upload resume (PDF/DOCX) |
-| GET | `/api/resume/my-resumes` | Get all resumes |
-| POST | `/api/resume/parse/:resumeId` | Extract text from resume |
-| DELETE | `/api/resume/:id` | Delete resume |
+| GET | `/api/resume/my-resumes` | List your resumes |
+| POST | `/api/resume/parse/:resumeId` | Extract text (ownership-checked) |
+| DELETE | `/api/resume/:id` | Delete resume (ownership-checked) |
 
-### Analysis
+### Analysis / ATS / Career / Roadmap / Projects
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/analysis/:resumeId` | Analyze resume with AI |
-| GET | `/api/analysis/:resumeId` | Get existing analysis |
-
-### Career
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/career/:resumeId` | Get career advice |
-| POST | `/api/career/match/:resumeId` | Match with job description |
-
-### Report
-| Method | Endpoint | Description |
-|---|---|---|
+| POST | `/api/analysis/:resumeId` | AI resume analysis |
+| POST | `/api/ats/:resumeId` | ATS compatibility score |
+| GET | `/api/career/:resumeId` | Career advice |
+| POST | `/api/career/match/:resumeId` | Match against a job description |
+| POST | `/api/roadmap/:resumeId` | Generate a learning roadmap |
+| POST | `/api/projects/:resumeId` | Project intelligence report |
 | GET | `/api/report/:resumeId` | Download PDF report |
+
+*(Interview, DSA, application, portfolio, and progress endpoints follow the same pattern — see `routes/` for the full list.)*
+
+All resume-scoped endpoints above verify the resume belongs to the authenticated user before returning data.
 
 ---
 
 ## 🧠 AI Analysis — How It Works
 
 ```
-Resume Upload (PDF/DOCX)
+Resume Upload (PDF/DOCX) → Cloudinary
          ↓
-   Text Extraction
+   Text Extraction (pdf-parse / mammoth)
          ↓
    Domain Detection
-   (Auto-detects field)
          ↓
-  ┌──────────────────────┐
-  │  Cloudflare Workers  │
-  │  AI (Llama 3.1 70B)  │
-  └──────────────────────┘
+   Cloudflare Workers AI (Llama 3.1 70B)
          ↓
-   ATS Score (0-100)
-   Resume Score (0-100)
-   Skills Found
-   Missing Skills
-   5 Suggestions
-   Career Roadmap
-   Job Match Score
+   ATS Score · Resume Score · Skills · Missing Skills
+   Suggestions · Career Roadmap · Job Match Score
 ```
 
-### Supported Domains
-- 💻 Software Engineering / Web Development
-- ⚡ Electronics / Embedded Systems
-- ⚙️ Mechanical / Civil Engineering
-- 🏥 Medical / Healthcare
-- 💰 Finance / Accounting
-- 📊 Management / MBA
-- 📣 Marketing / Sales
-- 🔬 Data Science / Research
-- ⚖️ Legal / Law
-- 📚 Education / Teaching
-- And any other professional domain
+Supports Software, Electronics, Mechanical/Civil, Medical, Finance, Management, Marketing, Data Science, Legal, Education, and other professional domains.
 
 ---
 
-## 🗄️ Database Schema
+## 🗄️ Database Schema (core models)
 
 ```prisma
 model User {
@@ -312,43 +282,37 @@ model Analysis {
 }
 ```
 
+*(Also includes `Application`, `Portfolio`, `BuilderResume`, `CompanyPrepProgress`, and `MockInterview` models — see `prisma/schema.prisma` for the full schema.)*
+
 ---
 
 ## 🌐 Deployment
 
-### Frontend — Vercel
-1. Connect GitHub repo to Vercel
-2. Set Root Directory: `frontend`
-3. Add environment variable: `VITE_API_URL=https://your-backend.onrender.com/api`
-4. Deploy
+**Frontend (Vercel):** root directory `frontend`, env var `VITE_API_URL=<backend-url>/api`
 
-### Backend — Render
-1. Connect GitHub repo to Render
-2. Set Root Directory: `backend`
-3. Build Command: `npm install`
-4. Start Command: `node index.js`
-5. Add all environment variables
-6. Deploy
+**Backend (Render):** root directory `backend`, build `npm install`, start `node index.js`, all env vars from `.env.example` configured
+
+**CI (GitHub Actions):** runs `npm test` in `backend/` on every push/PR to `main` — see `.github/workflows/ci.yml`
 
 ---
 
 ## 🔑 Getting API Keys
 
-| Service | Get Key | Free Limit |
+| Service | Get Key | Free Tier |
 |---|---|---|
-| Neon DB | [neon.tech](https://neon.tech) | Free tier |
-| Cloudinary | [cloudinary.com](https://cloudinary.com) | 25GB free |
-| Cloudflare AI | [dash.cloudflare.com](https://dash.cloudflare.com) | No daily limit |
+| Neon DB | [neon.tech](https://neon.tech) | Yes |
+| Cloudinary | [cloudinary.com](https://cloudinary.com) | 25GB |
+| Cloudflare Workers AI | [dash.cloudflare.com](https://dash.cloudflare.com) | Yes |
 
 ---
 
 ## 👨‍💻 Author
 
-**Vikky Verma**  
+**Vikky Verma**
 GitHub: [@Vikky-Verma](https://github.com/Vikky-Verma)
 
 ---
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+MIT License — see [LICENSE](LICENSE).

@@ -1,9 +1,11 @@
 require("dotenv").config();
 
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 
 const prisma = require("./utils/prisma");
+const authenticate = require("./middleware/authMiddleware");
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
@@ -53,8 +55,23 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static Upload Folder
-app.use("/uploads", express.static("uploads"));
+// Static Upload Folder — auth-protected, owner-only (replaces express.static)
+app.get("/uploads/:filename", authenticate, async (req, res) => {
+  const { filename } = req.params;
+
+  const resume = await prisma.resume.findFirst({
+    where: {
+      userId: req.user.id,
+      filePath: { endsWith: filename },
+    },
+  });
+
+  if (!resume) {
+    return res.status(404).json({ message: "File Not Found" });
+  }
+
+  return res.sendFile(path.resolve(__dirname, "uploads", filename));
+});
 
 // Routes
 app.use("/api/auth", authRoutes);

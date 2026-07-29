@@ -1,20 +1,11 @@
-const prisma = require("../utils/prisma");
 const { analyzeProjects } = require("../services/projectAnalysisService");
+const getOwnedResume = require("../utils/getOwnedResume");
 
 const analyzeProjectIntelligence = async (req, res) => {
   try {
     const { resumeId } = req.params;
 
-    const resume = await prisma.resume.findUnique({
-      where: { id: resumeId },
-    });
-
-    if (!resume) {
-      return res.status(404).json({
-        success: false,
-        message: "Resume Not Found",
-      });
-    }
+    const resume = await getOwnedResume(resumeId, req.user.id);
 
     if (!resume.extractedText) {
       return res.status(400).json({
@@ -32,9 +23,9 @@ const analyzeProjectIntelligence = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    res.status(error.statusCode || 500).json({
       success: false,
-      message: "Project Analysis Failed",
+      message: error.message || "Project Analysis Failed",
     });
   }
 };

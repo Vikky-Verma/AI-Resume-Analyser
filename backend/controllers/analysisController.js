@@ -1,21 +1,13 @@
 const prisma = require("../utils/prisma");
 const analyzeResume = require("../services/aiAnalysisService");
+const getOwnedResume = require("../utils/getOwnedResume");
 
 const createAnalysis = async (req, res) => {
   try {
     const { resumeId } = req.params;
 
-    // Find Resume
-    const resume = await prisma.resume.findUnique({
-      where: { id: resumeId },
-    });
-
-    if (!resume) {
-      return res.status(404).json({
-        success: false,
-        message: "Resume Not Found",
-      });
-    }
+    // Find Resume — throws 404/403 if missing or not owned by req.user
+    const resume = await getOwnedResume(resumeId, req.user.id);
 
     if (!resume.extractedText) {
       return res.status(400).json({
@@ -117,7 +109,7 @@ const createAnalysis = async (req, res) => {
     console.log("Stack:", error.stack);
     console.log("==========================");
 
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || "Analysis Failed",
     });

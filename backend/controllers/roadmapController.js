@@ -1,5 +1,5 @@
-const prisma = require("../utils/prisma");
 const { generateRoadmap } = require("../services/roadmapService");
+const getOwnedResume = require("../utils/getOwnedResume");
 
 const VALID_TIMEFRAMES = [4, 8, 12, 24];
 
@@ -19,16 +19,7 @@ const analyzeRoadmap = async (req, res) => {
       ? Number(timeframeWeeks)
       : 8;
 
-    const resume = await prisma.resume.findUnique({
-      where: { id: resumeId },
-    });
-
-    if (!resume) {
-      return res.status(404).json({
-        success: false,
-        message: "Resume Not Found",
-      });
-    }
+    const resume = await getOwnedResume(resumeId, req.user.id);
 
     if (!resume.extractedText) {
       return res.status(400).json({
@@ -67,9 +58,9 @@ const analyzeRoadmap = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    res.status(error.statusCode || 500).json({
       success: false,
-      message: "Roadmap Generation Failed",
+      message: error.message || "Roadmap Generation Failed",
     });
   }
 };

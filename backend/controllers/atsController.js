@@ -1,21 +1,12 @@
-const prisma = require("../utils/prisma");
 const { generateATSReport } = require("../services/atsAnalysisService");
+const getOwnedResume = require("../utils/getOwnedResume");
 
 const analyzeATS = async (req, res) => {
   try {
     const { resumeId } = req.params;
     const { targetRole, experienceLevel } = req.body;
 
-    const resume = await prisma.resume.findUnique({
-      where: { id: resumeId },
-    });
-
-    if (!resume) {
-      return res.status(404).json({
-        success: false,
-        message: "Resume Not Found",
-      });
-    }
+    const resume = await getOwnedResume(resumeId, req.user.id);
 
     if (!resume.extractedText) {
       return res.status(400).json({
@@ -55,9 +46,9 @@ const analyzeATS = async (req, res) => {
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
+    res.status(error.statusCode || 500).json({
       success: false,
-      message: "ATS Analysis Failed",
+      message: error.message || "ATS Analysis Failed",
     });
   }
 };

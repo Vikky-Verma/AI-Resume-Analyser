@@ -1,18 +1,13 @@
 const prisma = require("../utils/prisma");
 const { generateCareerAdvice: getCareer } = require("../services/careerService");
 const generateResumePDF = require("../services/pdfService");
+const getOwnedResume = require("../utils/getOwnedResume");
 
 const downloadReport = async (req, res) => {
   try {
     const { resumeId } = req.params;
 
-    const resume = await prisma.resume.findUnique({
-      where: { id: resumeId },
-    });
-
-    if (!resume) {
-      return res.status(404).json({ success: false, message: "Resume Not Found" });
-    }
+    const resume = await getOwnedResume(resumeId, req.user.id);
 
     if (!resume.extractedText) {
       return res.status(400).json({ success: false, message: "Resume Not Parsed Yet" });
@@ -76,7 +71,7 @@ const downloadReport = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ success: false, message: "PDF Generation Failed" });
+    return res.status(error.statusCode || 500).json({ success: false, message: error.message || "PDF Generation Failed" });
   }
 };
 

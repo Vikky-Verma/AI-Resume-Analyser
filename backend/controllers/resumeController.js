@@ -5,6 +5,7 @@ const cloudinary = require("cloudinary").v2;
 const parsePDF = require("../utils/pdfParser");
 const parseDOCX = require("../utils/docxParser");
 const prisma = require("../utils/prisma");
+const getOwnedResume = require("../utils/getOwnedResume");
 
 const uploadResume = async (req, res) => {
   try {
@@ -45,13 +46,8 @@ const parseResume = async (req, res) => {
   try {
     const { resumeId } = req.params;
 
-    const resume = await prisma.resume.findUnique({
-      where: { id: resumeId },
-    });
-
-    if (!resume) {
-      return res.status(404).json({ message: "Resume Not Found" });
-    }
+    // ✅ throws 404 if missing, 403 if it belongs to someone else
+    const resume = await getOwnedResume(resumeId, req.user.id);
 
     let extractedText = "";
     const ext = path.extname(resume.originalName).toLowerCase();
@@ -74,7 +70,7 @@ const parseResume = async (req, res) => {
     return res.status(200).json({ success: true, extractedText });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Parsing Failed" });
+    return res.status(error.statusCode || 500).json({ message: error.message || "Parsing Failed" });
   }
 };
 

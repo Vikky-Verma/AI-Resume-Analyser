@@ -1,20 +1,11 @@
-const prisma = require("../utils/prisma");
 const { generateCareerAdvice, matchJobDescription } = require("../services/careerService");
+const getOwnedResume = require("../utils/getOwnedResume");
 
 const getCareerAdvice = async (req, res) => {
   try {
     const { resumeId } = req.params;
 
-    const resume = await prisma.resume.findUnique({
-      where: { id: resumeId },
-    });
-
-    if (!resume) {
-      return res.status(404).json({
-        success: false,
-        message: "Resume Not Found",
-      });
-    }
+    const resume = await getOwnedResume(resumeId, req.user.id);
 
     if (!resume.extractedText) {
       return res.status(400).json({
@@ -48,9 +39,9 @@ const getCareerAdvice = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      message: "Career Analysis Failed",
+      message: error.message || "Career Analysis Failed",
     });
   }
 };
@@ -67,16 +58,7 @@ const matchJob = async (req, res) => {
       });
     }
 
-    const resume = await prisma.resume.findUnique({
-      where: { id: resumeId },
-    });
-
-    if (!resume) {
-      return res.status(404).json({
-        success: false,
-        message: "Resume Not Found",
-      });
-    }
+    const resume = await getOwnedResume(resumeId, req.user.id);
 
     if (!resume.extractedText) {
       return res.status(400).json({
@@ -113,9 +95,9 @@ const matchJob = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       success: false,
-      message: "Job Matching Failed",
+      message: error.message || "Job Matching Failed",
     });
   }
 };

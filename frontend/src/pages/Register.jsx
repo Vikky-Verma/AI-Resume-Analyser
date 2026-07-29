@@ -4,20 +4,38 @@ import API from "../api/axios";
 import toast from "react-hot-toast";
 import { FileText, User, Mail, Lock, Loader2 } from "lucide-react";
 
+const passwordChecks = [
+  { label: "At least 8 characters", test: (pw) => pw.length >= 8 },
+  { label: "One uppercase letter", test: (pw) => /[A-Z]/.test(pw) },
+  { label: "One lowercase letter", test: (pw) => /[a-z]/.test(pw) },
+  { label: "One number", test: (pw) => /[0-9]/.test(pw) },
+];
+
 const Register = () => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setFieldErrors({});
     try {
       await API.post("/auth/register", form);
       toast.success("Account created! Please login.");
       navigate("/login");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Registration failed");
+      const errors = err.response?.data?.errors;
+      if (errors) {
+        const grouped = {};
+        errors.forEach(({ field, message }) => {
+          grouped[field] = grouped[field] ? [...grouped[field], message] : [message];
+        });
+        setFieldErrors(grouped);
+      } else {
+        toast.error(err.response?.data?.message || "Registration failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -60,6 +78,26 @@ const Register = () => {
                     required
                   />
                 </div>
+
+                {key === "password" && (
+                  <ul className="mt-1.5 space-y-0.5">
+                    {passwordChecks.map(({ label: checkLabel, test }) => {
+                      const passed = test(form.password);
+                      return (
+                        <li
+                          key={checkLabel}
+                          className={`text-xs ${passed ? "text-emerald-400" : "text-slate-500"}`}
+                        >
+                          {passed ? "✓" : "○"} {checkLabel}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+
+                {fieldErrors[key]?.map((msg) => (
+                  <p key={msg} className="text-red-400 text-xs mt-1">{msg}</p>
+                ))}
               </div>
             ))}
 

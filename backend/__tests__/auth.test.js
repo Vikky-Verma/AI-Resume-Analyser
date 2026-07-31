@@ -3,12 +3,24 @@ jest.mock("../utils/prisma", () => ({
     findUnique: jest.fn(),
     create: jest.fn(),
   },
+  otpVerification: {
+    findUnique: jest.fn(),
+    upsert: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
+
+jest.mock("../utils/mailer", () => ({
+  sendOtpEmail: jest.fn().mockResolvedValue(true),
 }));
 
 const request = require("supertest");
 const bcrypt = require("bcryptjs");
 const app = require("../app");
 const prisma = require("../utils/prisma");
+const { sendOtpEmail } = require("../utils/mailer");
+const { hashOtp } = require("../utils/otp");
 
 describe("Auth routes", () => {
   beforeEach(() => {
@@ -50,13 +62,9 @@ describe("Auth routes", () => {
       expect(res.body.message).toMatch(/already exists/i);
     });
 
-    it("registers a new user with valid data", async () => {
+    it("stages the signup and emails an OTP instead of creating the user immediately", async () => {
       prisma.user.findUnique.mockResolvedValue(null);
-      prisma.user.create.mockResolvedValue({
-        id: "1",
-        name: "Test User",
-        email: "test@example.com",
-      });
+      prisma.otpVerification.upsert.mockResolvedValue({});
 
       const res = await request(app).post("/api/auth/register").send({
         name: "Test User",
@@ -64,8 +72,58 @@ describe("Auth routes", () => {
         password: "StrongPass123",
       });
 
+      expect(res.status).toBe(200);
+      expect(res.body.email).toBe("test@example.com");
+      expect(prisma.otpVerification.upsert).toHaveBeenCalledTimes(1);
+      expect(prisma.user.create).not.toHaveBeenCalled();
+      expect(sendOtpEmail).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("POST /api/auth/register/verify-otp", () => {
+    it("rejects an incorrect code", async () => {
+      prisma.otpVerification.findUnique.mockResolvedValue({
+        email: "test@example.com",
+        name: "Test User",
+        password: "hashed",
+        otpHash: hashOtp("111111"),
+        expiresAt: new Date(Date.now() + 60_000),
+        attempts: 0,
+      });
+
+      const res = await request(app).post("/api/auth/register/verify-otp").send({
+        email: "test@example.com",
+        otp: "000000",
+      });
+
+      expect(res.status).toBe(400);
+      expect(prisma.user.create).not.toHaveBeenCalled();
+    });
+
+    it("creates the user once the correct code is submitted", async () => {
+      prisma.otpVerification.findUnique.mockResolvedValue({
+        email: "test@example.com",
+        name: "Test User",
+        password: "hashed",
+        otpHash: hashOtp("123456"),
+        expiresAt: new Date(Date.now() + 60_000),
+        attempts: 0,
+      });
+      prisma.user.findUnique.mockResolvedValue(null);
+      prisma.user.create.mockResolvedValue({
+        id: "1",
+        name: "Test User",
+        email: "test@example.com",
+      });
+
+      const res = await request(app).post("/api/auth/register/verify-otp").send({
+        email: "test@example.com",
+        otp: "123456",
+      });
+
       expect(res.status).toBe(201);
       expect(prisma.user.create).toHaveBeenCalledTimes(1);
+      expect(prisma.otpVerification.delete).toHaveBeenCalledTimes(1);
     });
   });
 

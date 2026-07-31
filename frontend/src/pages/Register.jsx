@@ -23,8 +23,8 @@ const Register = () => {
     setFieldErrors({});
     try {
       await API.post("/auth/register", form);
-      toast.success("Account created! Please login.");
-      navigate("/login");
+      toast.success("Verification code sent to your email");
+      navigate("/verify-otp", { state: { email: form.email } });
     } catch (err) {
       const errors = err.response?.data?.errors;
       if (errors) {

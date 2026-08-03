@@ -17,8 +17,6 @@ const { sendOtpEmail } = require("../utils/mailer");
 
 const router = express.Router();
 
-// Step 1: user submits name/email/password — we stage it and email a code.
-// No row is created in the real User table until the code is verified.
 router.post(
   "/register",
   authLimiter,
@@ -59,11 +57,13 @@ router.post(
         },
       });
 
-      await sendOtpEmail(email, name, otp);
-
       res.status(200).json({
         message: "Verification code sent to your email",
         email,
+      });
+
+      sendOtpEmail(email, name, otp).catch((emailErr) => {
+        console.error("Failed to send OTP email to", email, emailErr?.response?.data || emailErr.message);
       });
     } catch (err) {
       console.error(err);
@@ -74,7 +74,6 @@ router.post(
   }
 );
 
-// Step 2: user submits the 6-digit code — only now does the real User row get created.
 router.post(
   "/register/verify-otp",
   otpLimiter,
@@ -139,7 +138,6 @@ router.post(
   }
 );
 
-// Resend: same code slot, new OTP, enforced cooldown so it can't be spammed.
 router.post(
   "/register/resend-otp",
   otpLimiter,
@@ -178,9 +176,11 @@ router.post(
         },
       });
 
-      await sendOtpEmail(email, pending.name, otp);
-
       res.status(200).json({ message: "Verification code resent" });
+
+      sendOtpEmail(email, pending.name, otp).catch((emailErr) => {
+        console.error("Failed to resend OTP email to", email, emailErr?.response?.data || emailErr.message);
+      });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Server Error" });

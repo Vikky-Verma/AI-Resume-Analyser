@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import Footer from "../components/Footer";
+import ParticleField from "../components/animations/ParticleField";
+import TypewriterText from "../components/animations/TypewriterText";
+import AnimatedCounter from "../components/animations/AnimatedCounter";
 import {
   FileText,
   Cpu,
@@ -92,6 +96,23 @@ const FEATURES = [
   },
 ];
 
+const STATS = [
+  { value: 10000, suffix: "+", label: "Resumes Analyzed" },
+  { value: 95, suffix: "%", label: "ATS Pass Rate" },
+  { value: 6, suffix: "", label: "Score Dimensions" },
+  { value: 24, suffix: "/7", label: "AI Availability" },
+];
+
+const TAGLINES = [
+  "Software Engineer.",
+  "Data Analyst.",
+  "Product Manager.",
+  "Finance Associate.",
+  "Marketing Lead.",
+];
+
+const MotionLink = motion(Link);
+
 const colorClasses = {
   indigo: { bg: "bg-indigo-950", border: "border-indigo-800", text: "text-indigo-400" },
   teal: { bg: "bg-teal-950", border: "border-teal-800", text: "text-teal-400" },
@@ -108,9 +129,9 @@ const Landing = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#0a0e14]">
+    <div className="min-h-screen bg-[#0a0e14] overflow-hidden">
       {/* Top bar */}
-      <nav className="px-6 h-16 flex items-center justify-between border-b border-[#1e2233] max-w-6xl mx-auto">
+      <nav className="px-6 h-16 flex items-center justify-between border-b border-[#1e2233] max-w-6xl mx-auto relative z-10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center">
             <FileText size={18} className="text-white" />
@@ -122,12 +143,14 @@ const Landing = () => {
 
         <div className="flex items-center gap-3">
           {user ? (
-            <Link
+            <MotionLink
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
               to="/dashboard"
-              className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-xl transition-all"
+              className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-xl transition-colors"
             >
               Go to Dashboard
-            </Link>
+            </MotionLink>
           ) : (
             <>
               <Link
@@ -136,49 +159,98 @@ const Landing = () => {
               >
                 Login
               </Link>
-              <Link
+              <MotionLink
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
                 to="/register"
-                className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-xl transition-all"
+                className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-xl transition-colors"
               >
                 Get Started
-              </Link>
+              </MotionLink>
             </>
           )}
         </div>
       </nav>
 
       {/* Hero */}
-      <div className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#11151d] border border-[#232838] rounded-full mb-6">
+      <div className="relative max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
+        {/* Floating gradient blobs */}
+        <div className="pointer-events-none absolute -top-24 -left-24 w-[26rem] h-[26rem] bg-indigo-600/20 rounded-full blur-[110px] animate-float-blob" />
+        <div className="pointer-events-none absolute -top-10 -right-24 w-[24rem] h-[24rem] bg-violet-600/15 rounded-full blur-[110px] animate-float-blob-slow" />
+        <div className="pointer-events-none absolute top-40 left-1/3 w-[20rem] h-[20rem] bg-teal-500/10 rounded-full blur-[100px] animate-float-blob" />
+
+        {/* Subtle particle network behind the hero text */}
+        <ParticleField count={42} linkDistance={120} className="opacity-70" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative inline-flex items-center gap-2 px-3 py-1.5 bg-[#11151d]/80 backdrop-blur border border-[#232838] rounded-full mb-6"
+        >
           <Sparkles size={13} className="text-indigo-400" />
           <span className="text-slate-400 text-xs font-medium">
             Your AI-Powered Placement Platform
           </span>
-        </div>
+        </motion.div>
 
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">
-          Everything You Need <br /> To Get Placed
-        </h1>
-        <p className="text-slate-400 text-lg mt-6 max-w-xl mx-auto">
+        <motion.h1
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.05 }}
+          className="relative text-5xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight"
+        >
+          Get Placed As A <br />
+          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-teal-300 bg-clip-text text-transparent">
+            <TypewriterText words={TAGLINES} />
+          </span>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.12 }}
+          className="relative text-slate-400 text-lg mt-6 max-w-xl mx-auto"
+        >
           Resume intelligence, ATS scoring, coding profile analysis, and mock
           interviews — one platform that tracks your placement readiness end
           to end.
-        </p>
+        </motion.p>
 
-        <div className="flex items-center justify-center gap-3 mt-9">
-          <Link
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.18 }}
+          className="relative flex items-center justify-center gap-3 mt-9"
+        >
+          <MotionLink
+            whileHover={{ scale: 1.045, boxShadow: "0 0 28px rgba(99,102,241,0.45)" }}
+            whileTap={{ scale: 0.97 }}
             to={user ? "/dashboard" : "/register"}
-            className="flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-all"
+            className="flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-colors"
           >
             {user ? "Go to Dashboard" : "Get Started Free"}
             <ArrowRight size={16} />
-          </Link>
-          <Link
+          </MotionLink>
+          <MotionLink
+            whileHover={{ scale: 1.045, borderColor: "rgba(99,102,241,0.6)" }}
+            whileTap={{ scale: 0.97 }}
             to={user ? "/ats-checker" : "/login"}
-            className="px-6 py-3.5 bg-[#11151d] border border-[#232838] hover:border-indigo-500/50 text-slate-200 text-sm font-bold rounded-xl transition-all"
+            className="px-6 py-3.5 bg-[#11151d] border border-[#232838] text-slate-200 text-sm font-bold rounded-xl transition-colors"
           >
             Try ATS Checker
-          </Link>
+          </MotionLink>
+        </motion.div>
+
+        {/* Animated stat counters */}
+        <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-6 mt-16 max-w-2xl mx-auto">
+          {STATS.map((s) => (
+            <div key={s.label}>
+              <p className="text-3xl sm:text-4xl font-extrabold text-white">
+                <AnimatedCounter value={s.value} suffix={s.suffix} />
+              </p>
+              <p className="text-slate-500 text-xs mt-1 font-medium">{s.label}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -198,9 +270,14 @@ const Landing = () => {
             const c = colorClasses[f.color];
             const Icon = f.icon;
             return (
-              <div
+              <motion.div
                 key={i}
-                className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 hover:border-indigo-500/40 transition-all"
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.45, delay: (i % 3) * 0.08, ease: "easeOut" }}
+                whileHover={{ y: -4 }}
+                className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 hover:border-indigo-500/40 transition-colors"
               >
                 <div
                   className={`w-11 h-11 ${c.bg} border ${c.border} rounded-xl flex items-center justify-center mb-4`}
@@ -213,7 +290,7 @@ const Landing = () => {
                 <p className="text-slate-400 text-sm leading-relaxed">
                   {f.desc}
                 </p>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -221,21 +298,29 @@ const Landing = () => {
 
       {/* Bottom CTA */}
       <div className="border-t border-[#1e2233]">
-        <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5 }}
+          className="max-w-4xl mx-auto px-6 py-16 text-center"
+        >
           <h2 className="text-2xl font-extrabold text-white mb-3">
             Ready to check your placement readiness?
           </h2>
           <p className="text-slate-400 text-sm mb-7">
             It takes less than a minute to upload and get your first report.
           </p>
-          <Link
+          <MotionLink
+            whileHover={{ scale: 1.045, boxShadow: "0 0 28px rgba(99,102,241,0.45)" }}
+            whileTap={{ scale: 0.97 }}
             to={user ? "/dashboard" : "/register"}
-            className="inline-flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-colors"
           >
             {user ? "Go to Dashboard" : "Get Started — It's Free"}
             <ArrowRight size={16} />
-          </Link>
-        </div>
+          </MotionLink>
+        </motion.div>
       </div>
 
       <Footer />

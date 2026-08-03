@@ -1,5 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
+import MorphMenuIcon from "./animations/MorphMenuIcon";
 import {
   FileText,
   Mic,
@@ -7,8 +9,6 @@ import {
   Radar,
   LogOut,
   ChevronDown,
-  Menu,
-  X,
   Code2,
   FolderGit2,
   Route as RouteIcon,
@@ -43,7 +43,7 @@ const SoonBadge = () => (
   </span>
 );
 
-const DesktopDropdown = ({ label, items }) => {
+const DesktopDropdown = ({ label, items, navKey, hovered, setHovered }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const location = useLocation();
@@ -59,7 +59,19 @@ const DesktopDropdown = ({ label, items }) => {
   const active = items.some((i) => location.pathname.startsWith(i.to));
 
   return (
-    <div className="relative" ref={ref}>
+    <div
+      className="relative px-3 py-2 rounded-lg"
+      ref={ref}
+      onMouseEnter={() => setHovered?.(navKey)}
+      onMouseLeave={() => setHovered?.(null)}
+    >
+      {hovered === navKey && (
+        <motion.div
+          layoutId="nav-hover-pill"
+          className="absolute inset-0 bg-[#20243b] rounded-lg -z-10"
+          transition={{ type: "spring", stiffness: 420, damping: 32 }}
+        />
+      )}
       <button
         onClick={() => setOpen((o) => !o)}
         className={`flex items-center gap-1.5 text-sm font-semibold transition-colors ${
@@ -71,7 +83,12 @@ const DesktopDropdown = ({ label, items }) => {
       </button>
 
       {open && (
-        <div className="absolute left-0 mt-3 w-64 rounded-xl bg-[#171a2c] border border-[#2e3150] shadow-2xl overflow-hidden py-2 z-50">
+        <motion.div
+          initial={{ opacity: 0, y: -6, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.16, ease: "easeOut" }}
+          className="absolute left-0 mt-3 w-64 rounded-xl bg-[#171a2c] border border-[#2e3150] shadow-2xl overflow-hidden py-2 z-50"
+        >
           {items.map(({ to, label, icon: Icon, soon }) => (
             <Link
               key={to}
@@ -84,7 +101,7 @@ const DesktopDropdown = ({ label, items }) => {
               {soon && <SoonBadge />}
             </Link>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );
@@ -98,6 +115,8 @@ const Navbar = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileGroup, setMobileGroup] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [hoveredNav, setHoveredNav] = useState(null);
   const userMenuRef = useRef(null);
 
   useEffect(() => {
@@ -108,6 +127,14 @@ const Navbar = () => {
     };
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  // Shrink + blur the navbar once the page has scrolled a bit.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Close mobile menu on route change
@@ -123,19 +150,41 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname.startsWith(path);
 
-  const NavLink = ({ to, children }) => (
-    <Link
-      to={to}
-      className={`text-sm font-semibold transition-colors ${
-        isActive(to) ? "text-indigo-400" : "text-slate-300 hover:text-white"
-      }`}
+  const NavLink = ({ to, navKey, children }) => (
+    <div
+      className="relative px-3 py-2 rounded-lg"
+      onMouseEnter={() => setHoveredNav(navKey)}
+      onMouseLeave={() => setHoveredNav(null)}
     >
-      {children}
-    </Link>
+      {hoveredNav === navKey && (
+        <motion.div
+          layoutId="nav-hover-pill"
+          className="absolute inset-0 bg-[#20243b] rounded-lg -z-10"
+          transition={{ type: "spring", stiffness: 420, damping: 32 }}
+        />
+      )}
+      <Link
+        to={to}
+        className={`text-sm font-semibold transition-colors ${
+          isActive(to) ? "text-indigo-400" : "text-slate-300 hover:text-white"
+        }`}
+      >
+        {children}
+      </Link>
+    </div>
   );
 
   return (
-    <nav className="bg-[#1a1d2e] border-b border-[#2e3150] px-6 h-16 flex items-center justify-between sticky top-0 z-50">
+    <motion.nav
+      animate={{
+        height: scrolled ? 56 : 64,
+        backgroundColor: scrolled ? "rgba(26, 29, 46, 0.75)" : "rgba(26, 29, 46, 1)",
+      }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className={`border-b border-[#2e3150] px-6 flex items-center justify-between sticky top-0 z-50 ${
+        scrolled ? "backdrop-blur-md shadow-lg shadow-black/20" : ""
+      }`}
+    >
       {/* Logo + Links */}
       <div className="flex items-center gap-8">
         <Link to="/dashboard" className="flex items-center gap-3 no-underline shrink-0">
@@ -145,15 +194,15 @@ const Navbar = () => {
           <span className="text-white font-bold text-lg tracking-tight">AlgoVerse</span>
         </Link>
 
-        <div className="hidden lg:flex items-center gap-7">
-          <NavLink to="/dashboard">
+        <div className="hidden lg:flex items-center gap-1">
+          <NavLink to="/dashboard" navKey="dashboard">
             <span className="flex items-center gap-1.5">
               <LayoutDashboard size={14} /> Dashboard
             </span>
           </NavLink>
-          <DesktopDropdown label="Prepare" items={PREPARE_ITEMS} />
-          <DesktopDropdown label="Track" items={TRACK_ITEMS} />
-          <NavLink to="/pricing">Pricing</NavLink>
+          <DesktopDropdown label="Prepare" items={PREPARE_ITEMS} navKey="prepare" hovered={hoveredNav} setHovered={setHoveredNav} />
+          <DesktopDropdown label="Track" items={TRACK_ITEMS} navKey="track" hovered={hoveredNav} setHovered={setHoveredNav} />
+          <NavLink to="/pricing" navKey="pricing">Pricing</NavLink>
         </div>
       </div>
 
@@ -193,15 +242,23 @@ const Navbar = () => {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen((o) => !o)}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
           className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-[#2e3150] bg-[#20243b] text-white"
         >
-          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+          <MorphMenuIcon open={mobileOpen} size={18} />
         </button>
       </div>
 
       {/* Mobile menu */}
+      <AnimatePresence>
       {mobileOpen && (
-        <div className="lg:hidden absolute top-16 left-0 right-0 bg-[#1a1d2e] border-b border-[#2e3150] max-h-[calc(100vh-4rem)] overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.22, ease: "easeInOut" }}
+          className="lg:hidden absolute top-16 left-0 right-0 bg-[#1a1d2e] border-b border-[#2e3150] max-h-[calc(100vh-4rem)] overflow-y-auto"
+        >
           <div className="flex flex-col px-4 py-3">
             <Link
               to="/dashboard"
@@ -260,9 +317,10 @@ const Navbar = () => {
               </Link>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
-    </nav>
+      </AnimatePresence>
+    </motion.nav>
   );
 };
 

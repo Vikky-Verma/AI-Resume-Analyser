@@ -15,6 +15,53 @@ body {
 ::-webkit-scrollbar-track { background: #0f1117; }
 ::-webkit-scrollbar-thumb { background: #2e3150; border-radius: 4px; }
 
+/* ── Shared motion primitives ───────────────────────────────────────── */
+
+@keyframes float-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.08); }
+  66% { transform: translate(-24px, 24px) scale(0.94); }
+}
+
+.animate-float-blob {
+  animation: float-blob 16s ease-in-out infinite;
+}
+
+.animate-float-blob-slow {
+  animation: float-blob 22s ease-in-out infinite;
+}
+
+@keyframes caret-blink {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-caret {
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes ripple-pulse {
+  0% { transform: scale(0); opacity: 0.45; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+.animate-ripple {
+  animation: ripple-pulse 600ms ease-out forwards;
+}
+
+/* Respect people who've asked their OS for less motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-blob,
+  .animate-float-blob-slow,
+  .animate-caret {
+    animation: none !important;
+  }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Resume Builder: "Download PDF" uses window.print(). These rules make sure
    only the #resume-to-print element is visible/printed, at A4 proportions. */
 @media print {

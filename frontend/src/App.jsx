@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AnimatedRoutes from "./components/animations/AnimatedRoutes";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -40,7 +41,7 @@ function App() {
             },
           }}
         />
-        <Routes>
+        <AnimatedRoutes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -180,7 +181,7 @@ function App() {
           <Route path="/pricing" element={<Pricing />} />
           {/* Public portfolio pages — shareable with recruiters, no login wall */}
           <Route path="/portfolio/:slug" element={<PortfolioPublic />} />
-        </Routes>
+        </AnimatedRoutes>
       </BrowserRouter>
     </AuthProvider>
   );

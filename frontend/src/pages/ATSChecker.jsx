@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import SkillBadge from "../components/SkillBadge";
+import CircularGauge from "../components/CircularGauge";
+import AnimatedBar from "../components/animations/AnimatedBar";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import {
   ClipboardCheck,
@@ -297,24 +300,7 @@ const ATSChecker = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-4 mb-5">
-                    <div className="relative w-16 h-16 shrink-0">
-                      <svg viewBox="0 0 64 64" className="w-16 h-16 -rotate-90">
-                        <circle cx="32" cy="32" r="27" fill="none" stroke="#22262f" strokeWidth="6" />
-                        <circle
-                          cx="32"
-                          cy="32"
-                          r="27"
-                          fill="none"
-                          stroke="#2dd4bf"
-                          strokeWidth="6"
-                          strokeLinecap="round"
-                          strokeDasharray={`${2 * Math.PI * 27 * 0.82} ${2 * Math.PI * 27}`}
-                        />
-                      </svg>
-                      <span className="absolute inset-0 flex items-center justify-center text-white font-extrabold text-sm">
-                        82
-                      </span>
-                    </div>
+                    <CircularGauge score={82} max={100} size={64} strokeWidth={6} />
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap gap-1.5">
                         <span className="px-2 py-0.5 bg-red-950/40 border border-red-900/40 text-red-300 text-[10px] font-semibold rounded-full">
@@ -561,7 +547,12 @@ const ATSChecker = () => {
         ) : (
         <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
           {/* Header */}
-          <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 flex items-center justify-between flex-wrap gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 flex items-center justify-between flex-wrap gap-4"
+          >
             <div>
               <div className="flex items-center gap-2">
                 <ClipboardCheck size={18} className="text-teal-400" />
@@ -591,13 +582,8 @@ const ATSChecker = () => {
                   </p>
                 </div>
               )}
-              <div className="text-right">
-                <p
-                  className="text-4xl font-extrabold"
-                  style={{ color: verdictColor(result.verdict) }}
-                >
-                  {result.atsScore}
-                </p>
+              <div className="flex items-center gap-3">
+                <CircularGauge score={result.atsScore} max={100} size={72} strokeWidth={7} />
                 <p
                   className="text-xs font-bold tracking-widest uppercase"
                   style={{ color: verdictColor(result.verdict) }}
@@ -606,7 +592,7 @@ const ATSChecker = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Best Role Matches */}
           {result.bestRoleMatches?.length > 0 && (
@@ -625,12 +611,12 @@ const ATSChecker = () => {
                         {r.matchPercent}% Match
                       </span>
                     </div>
-                    <div className="w-full h-1.5 bg-[#232838] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full"
-                        style={{ width: `${r.matchPercent}%` }}
-                      />
-                    </div>
+                    <AnimatedBar
+                      percent={r.matchPercent}
+                      trackClassName="w-full h-1.5 bg-[#232838] rounded-full overflow-hidden"
+                      fillClassName="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full"
+                      delay={i * 0.06}
+                    />
                   </div>
                 ))}
               </div>
@@ -673,17 +659,31 @@ const ATSChecker = () => {
               icon={<AlertTriangle size={15} className="text-red-400" />}
               tone="danger"
             >
-              <ul className="space-y-2">
+              <motion.ul
+                className="space-y-2"
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-40px" }}
+                variants={{
+                  hidden: {},
+                  show: { transition: { staggerChildren: 0.12 } },
+                }}
+              >
                 {result.criticalIssues.map((issue, i) => (
-                  <li
+                  <motion.li
                     key={i}
+                    variants={{
+                      hidden: { opacity: 0, x: -12 },
+                      show: { opacity: 1, x: 0 },
+                    }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                     className="text-red-200/90 text-sm flex items-start gap-2"
                   >
-                    <span className="text-red-400 mt-1">•</span>
+                    <AlertTriangle size={14} className="text-red-400 mt-0.5 shrink-0" />
                     {issue}
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             </Panel>
           )}
 
@@ -695,8 +695,12 @@ const ATSChecker = () => {
               </h2>
               <div className="grid sm:grid-cols-2 gap-3">
                 {result.categoryBreakdown.map((cat, i) => (
-                  <div
+                  <motion.div
                     key={i}
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.35, delay: (i % 2) * 0.08 }}
                     className="bg-[#11151d] border border-[#232838] rounded-xl p-4"
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -710,10 +714,17 @@ const ATSChecker = () => {
                         {cat.score}/10
                       </span>
                     </div>
-                    <p className="text-slate-500 text-xs leading-relaxed">
+                    <p className="text-slate-500 text-xs leading-relaxed mb-2.5">
                       {cat.note}
                     </p>
-                  </div>
+                    <AnimatedBar
+                      percent={(cat.score / 10) * 100}
+                      trackClassName="h-1.5 rounded-full bg-[#232838] overflow-hidden"
+                      fillClassName="h-full rounded-full"
+                      color={scoreColor(cat.score)}
+                      delay={(i % 2) * 0.08}
+                    />
+                  </motion.div>
                 ))}
               </div>
             </div>

@@ -2,6 +2,19 @@ import { useState } from "react";
 import API from "../api/axios";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
+import { motion } from "framer-motion";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
+import AnimatedBar from "../components/animations/AnimatedBar";
+import AnimatedCounter from "../components/animations/AnimatedCounter";
 import {
   Code2,
   Search,
@@ -13,20 +26,58 @@ import {
   BarChart3,
 } from "lucide-react";
 
-const DifficultyBar = ({ label, value, total, colorClass }) => {
+const DifficultyBar = ({ label, value, total, colorClass, color }) => {
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
   return (
     <div>
       <div className="flex justify-between text-sm mb-1.5">
         <span className="text-slate-400">{label}</span>
-        <span className="text-white font-semibold">{value}</span>
+        <span className="text-white font-semibold">
+          <AnimatedCounter value={value} duration={1} />
+        </span>
       </div>
-      <div className="h-2 rounded-full bg-[#242840] overflow-hidden">
-        <div
-          className={`h-full rounded-full ${colorClass}`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+      <AnimatedBar
+        percent={pct}
+        trackClassName="h-2 rounded-full bg-[#242840] overflow-hidden"
+        fillClassName={`h-full rounded-full ${colorClass || ""}`}
+        color={color}
+      />
+    </div>
+  );
+};
+
+/** Difficulty split rendered as an animated bar chart via Recharts. */
+const DifficultyChart = ({ easy, medium, hard }) => {
+  const data = [
+    { name: "Easy", value: easy, fill: "#10b981" },
+    { name: "Medium", value: medium, fill: "#f59e0b" },
+    { name: "Hard", value: hard, fill: "#f43f5e" },
+  ];
+
+  return (
+    <div className="h-48 -ml-3">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#22262f" vertical={false} />
+          <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+          <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} width={32} />
+          <Tooltip
+            cursor={{ fill: "rgba(255,255,255,0.04)" }}
+            contentStyle={{
+              background: "#171a2c",
+              border: "1px solid #2e3150",
+              borderRadius: 10,
+              fontSize: 12,
+              color: "#f1f5f9",
+            }}
+          />
+          <Bar dataKey="value" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={900} animationEasing="ease-out">
+            {data.map((d, i) => (
+              <Cell key={i} fill={d.fill} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
@@ -111,8 +162,8 @@ const DsaInsights = () => {
     <div className="min-h-screen bg-[#07090f] relative overflow-hidden">
       {!hasResult && (
         <>
-          <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-amber-500/10 rounded-full blur-[120px]" />
-          <div className="pointer-events-none absolute top-40 -right-32 w-[28rem] h-[28rem] bg-indigo-500/15 rounded-full blur-[120px]" />
+          <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-amber-500/10 rounded-full blur-[120px] animate-float-blob" />
+          <div className="pointer-events-none absolute top-40 -right-32 w-[28rem] h-[28rem] bg-indigo-500/15 rounded-full blur-[120px] animate-float-blob-slow" />
         </>
       )}
 
@@ -168,10 +219,17 @@ const DsaInsights = () => {
 
                 {/* Feature tiles */}
                 <div className="mt-9 space-y-4">
-                  {FEATURES.map(({ icon: Icon, color, title, desc }) => {
+                  {FEATURES.map(({ icon: Icon, color, title, desc }, i) => {
                     const c = COLOR_MAP[color];
                     return (
-                      <div key={title} className="flex items-start gap-4">
+                      <motion.div
+                        key={title}
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-40px" }}
+                        transition={{ duration: 0.4, delay: i * 0.08 }}
+                        className="flex items-start gap-4"
+                      >
                         <div
                           className={`w-10 h-10 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center shrink-0`}
                         >
@@ -183,7 +241,7 @@ const DsaInsights = () => {
                             {desc}
                           </p>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
@@ -204,18 +262,25 @@ const DsaInsights = () => {
                       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2.5">
                         Platform
                       </label>
-                      <div className="flex gap-2 bg-[#12141a] border border-[#22262f] rounded-xl p-1 w-fit">
+                      <div className="relative flex gap-2 bg-[#12141a] border border-[#22262f] rounded-xl p-1 w-fit">
                         {PLATFORMS.map((p) => (
                           <button
                             key={p.key}
                             type="button"
                             onClick={() => switchPlatform(p.key)}
-                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                            className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                               platform === p.key
-                                ? "bg-amber-500 text-white"
+                                ? "text-white"
                                 : "text-slate-400 hover:text-white"
                             }`}
                           >
+                            {platform === p.key && (
+                              <motion.div
+                                layoutId="dsa-platform-pill"
+                                className="absolute inset-0 bg-amber-500 rounded-lg -z-10"
+                                transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                              />
+                            )}
                             {p.label}
                           </button>
                         ))}
@@ -234,10 +299,12 @@ const DsaInsights = () => {
                         className="w-full bg-[#12141a] border border-[#22262f] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-500 transition-colors"
                       />
 
-                      <button
+                      <motion.button
+                        whileHover={{ scale: loading ? 1 : 1.02 }}
+                        whileTap={{ scale: loading ? 1 : 0.97 }}
                         type="submit"
                         disabled={loading}
-                        className="w-full mt-7 flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-amber-500 to-indigo-500 hover:from-amber-600 hover:to-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-full transition-all"
+                        className="w-full mt-7 flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-amber-500 to-indigo-500 hover:from-amber-600 hover:to-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-full transition-colors"
                       >
                         {loading ? (
                           <>
@@ -250,7 +317,7 @@ const DsaInsights = () => {
                             Fetch Stats
                           </>
                         )}
-                      </button>
+                      </motion.button>
                     </form>
                   </div>
                 </div>
@@ -281,7 +348,12 @@ const DsaInsights = () => {
 
             {/* LeetCode result */}
             {platform === "leetcode" && currentStats && (
-              <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6 space-y-8">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6 space-y-8"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-lg font-semibold text-white">
@@ -295,21 +367,33 @@ const DsaInsights = () => {
                         <Trophy size={13} /> Rank
                       </div>
                       <p className="font-semibold text-white">
-                        {currentStats.ranking ? `#${currentStats.ranking.toLocaleString()}` : "—"}
+                        {currentStats.ranking ? (
+                          <AnimatedCounter value={currentStats.ranking} prefix="#" duration={1.2} />
+                        ) : (
+                          "—"
+                        )}
                       </p>
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5 justify-end text-slate-400 text-xs mb-1">
                         <Star size={13} /> Reputation
                       </div>
-                      <p className="font-semibold text-white">{currentStats.reputation ?? "—"}</p>
+                      <p className="font-semibold text-white">
+                        {currentStats.reputation !== undefined && currentStats.reputation !== null ? (
+                          <AnimatedCounter value={currentStats.reputation} duration={1} />
+                        ) : (
+                          "—"
+                        )}
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-bold text-white">{currentStats.solved.total}</span>
+                    <span className="text-3xl font-bold text-white">
+                      <AnimatedCounter value={currentStats.solved.total} duration={1.1} />
+                    </span>
                     <span className="text-sm text-slate-500">problems solved</span>
                   </div>
 
@@ -318,13 +402,29 @@ const DsaInsights = () => {
                     <DifficultyBar label="Medium" value={currentStats.solved.medium} total={currentStats.solved.total} colorClass="bg-amber-500" />
                     <DifficultyBar label="Hard" value={currentStats.solved.hard} total={currentStats.solved.total} colorClass="bg-rose-500" />
                   </div>
+
+                  <div className="mt-6 pt-6 border-t border-[#242840]">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">
+                      Difficulty Breakdown
+                    </p>
+                    <DifficultyChart
+                      easy={currentStats.solved.easy}
+                      medium={currentStats.solved.medium}
+                      hard={currentStats.solved.hard}
+                    />
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* Codeforces result */}
             {platform === "codeforces" && currentStats && (
-              <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6 space-y-8">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6 space-y-8"
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-lg font-semibold text-white">@{currentStats.handle}</p>
@@ -335,20 +435,34 @@ const DsaInsights = () => {
                       <div className="flex items-center gap-1.5 justify-end text-slate-400 text-xs mb-1">
                         <Trophy size={13} /> Rating
                       </div>
-                      <p className="font-semibold text-white">{currentStats.rating ?? "Unrated"}</p>
+                      <p className="font-semibold text-white">
+                        {currentStats.rating !== undefined && currentStats.rating !== null ? (
+                          <AnimatedCounter value={currentStats.rating} duration={1.2} />
+                        ) : (
+                          "Unrated"
+                        )}
+                      </p>
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5 justify-end text-slate-400 text-xs mb-1">
                         <Star size={13} /> Max Rating
                       </div>
-                      <p className="font-semibold text-white">{currentStats.maxRating ?? "—"}</p>
+                      <p className="font-semibold text-white">
+                        {currentStats.maxRating !== undefined && currentStats.maxRating !== null ? (
+                          <AnimatedCounter value={currentStats.maxRating} duration={1} />
+                        ) : (
+                          "—"
+                        )}
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-bold text-white">{currentStats.solved.total}</span>
+                    <span className="text-3xl font-bold text-white">
+                      <AnimatedCounter value={currentStats.solved.total} duration={1.1} />
+                    </span>
                     <span className="text-sm text-slate-500">problems solved</span>
                   </div>
 
@@ -360,8 +474,19 @@ const DsaInsights = () => {
                       <DifficultyBar label="Unrated" value={currentStats.solved.unrated} total={currentStats.solved.total} colorClass="bg-slate-500" />
                     )}
                   </div>
+
+                  <div className="mt-6 pt-6 border-t border-[#242840]">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">
+                      Difficulty Breakdown
+                    </p>
+                    <DifficultyChart
+                      easy={currentStats.solved.easy}
+                      medium={currentStats.solved.medium}
+                      hard={currentStats.solved.hard}
+                    />
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
         )}

@@ -2,6 +2,7 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop";
 import AnimatedRoutes from "./components/animations/AnimatedRoutes";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -29,6 +30,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Toaster
           position="top-right"
           toastOptions={{

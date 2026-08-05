@@ -50,15 +50,23 @@ body {
   animation: ripple-pulse 600ms ease-out forwards;
 }
 
+@keyframes gradient-spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-gradient-spin {
+  animation-name: gradient-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
 /* Respect people who've asked their OS for less motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-float-blob,
   .animate-float-blob-slow,
-  .animate-caret {
+  .animate-caret,
+  .animate-gradient-spin {
     animation: none !important;
-  }
-  *, *::before, *::after {
-    scroll-behavior: auto !important;
   }
 }
 

@@ -6,6 +6,9 @@ import PublicNavbar from "../components/PublicNavbar";
 import ParticleField from "../components/animations/ParticleField";
 import TypewriterText from "../components/animations/TypewriterText";
 import AnimatedCounter from "../components/animations/AnimatedCounter";
+import TiltCard from "../components/effects/TiltCard";
+import GradientBorder from "../components/effects/GradientBorder";
+import MagneticButton from "../components/effects/MagneticButton";
 import {
   FileText,
   Cpu,
@@ -112,8 +115,6 @@ const TAGLINES = [
   "Marketing Lead.",
 ];
 
-const MotionLink = motion(Link);
-
 const colorClasses = {
   indigo: { bg: "bg-indigo-950", border: "border-indigo-800", text: "text-indigo-400" },
   teal: { bg: "bg-teal-950", border: "border-teal-800", text: "text-teal-400" },
@@ -130,7 +131,10 @@ const Landing = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#0a0e14] overflow-hidden">
+    <div className="min-h-screen overflow-hidden">
+      {/* Background is the global CosmicBackground mounted in App.jsx — this
+          page intentionally stays transparent so it shows through. */}
+
       {/* Top bar */}
       <PublicNavbar />
 
@@ -184,36 +188,40 @@ const Landing = () => {
           transition={{ duration: 0.55, delay: 0.18 }}
           className="relative flex items-center justify-center gap-3 mt-9"
         >
-          <MotionLink
-            whileHover={{ scale: 1.045, boxShadow: "0 0 28px rgba(99,102,241,0.45)" }}
-            whileTap={{ scale: 0.97 }}
+          <MagneticButton
+            as={Link}
             to={user ? "/home" : "/register"}
-            className="flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-colors"
+            className="flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-[0_0_0_rgba(99,102,241,0)] hover:shadow-[0_0_28px_rgba(99,102,241,0.45)] transition-[background-color,box-shadow]"
           >
             {user ? "Go to Dashboard" : "Get Started Free"}
             <ArrowRight size={16} />
-          </MotionLink>
-          <MotionLink
-            whileHover={{ scale: 1.045, borderColor: "rgba(99,102,241,0.6)" }}
-            whileTap={{ scale: 0.97 }}
+          </MagneticButton>
+          <MagneticButton
+            as={Link}
             to={user ? "/ats-checker" : "/login"}
-            className="px-6 py-3.5 bg-[#11151d] border border-[#232838] text-slate-200 text-sm font-bold rounded-xl transition-colors"
+            className="px-6 py-3.5 bg-[#11151d]/80 backdrop-blur border border-[#232838] hover:border-indigo-500/50 text-slate-200 text-sm font-bold rounded-xl transition-colors"
           >
             Try ATS Checker
-          </MotionLink>
+          </MagneticButton>
         </motion.div>
 
         {/* Animated stat counters */}
-        <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-6 mt-16 max-w-2xl mx-auto">
-          {STATS.map((s) => (
-            <div key={s.label}>
-              <p className="text-3xl sm:text-4xl font-extrabold text-white">
-                <AnimatedCounter value={s.value} suffix={s.suffix} />
-              </p>
-              <p className="text-slate-500 text-xs mt-1 font-medium">{s.label}</p>
-            </div>
-          ))}
-        </div>
+        <GradientBorder
+          className="relative mt-16 max-w-2xl mx-auto"
+          borderRadius="1.5rem"
+          duration={9}
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 rounded-[1.5rem] bg-[#0d111a]/70 backdrop-blur-xl px-6 py-7">
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <p className="text-3xl sm:text-4xl font-extrabold text-white">
+                  <AnimatedCounter value={s.value} suffix={s.suffix} />
+                </p>
+                <p className="text-slate-500 text-xs mt-1 font-medium">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </GradientBorder>
       </div>
 
       {/* Feature cards */}
@@ -238,20 +246,23 @@ const Landing = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.45, delay: (i % 3) * 0.08, ease: "easeOut" }}
-                whileHover={{ y: -4 }}
-                className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 hover:border-indigo-500/40 transition-colors"
               >
-                <div
-                  className={`w-11 h-11 ${c.bg} border ${c.border} rounded-xl flex items-center justify-center mb-4`}
+                <TiltCard
+                  maxTilt={7}
+                  className="group h-full rounded-2xl bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] hover:border-indigo-500/40 p-6 shadow-[0_1px_0_rgba(255,255,255,0.03)_inset] hover:shadow-[0_18px_40px_-18px_rgba(99,102,241,0.35)] transition-[border-color,box-shadow] duration-300"
                 >
-                  <Icon size={20} className={c.text} />
-                </div>
-                <h3 className="text-white font-bold text-base mb-2">
-                  {f.title}
-                </h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  {f.desc}
-                </p>
+                  <div
+                    className={`w-11 h-11 ${c.bg} border ${c.border} rounded-xl flex items-center justify-center mb-4`}
+                  >
+                    <Icon size={20} className={c.text} />
+                  </div>
+                  <h3 className="text-white font-bold text-base mb-2">
+                    {f.title}
+                  </h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    {f.desc}
+                  </p>
+                </TiltCard>
               </motion.div>
             );
           })}
@@ -273,15 +284,14 @@ const Landing = () => {
           <p className="text-slate-400 text-sm mb-7">
             It takes less than a minute to upload and get your first report.
           </p>
-          <MotionLink
-            whileHover={{ scale: 1.045, boxShadow: "0 0 28px rgba(99,102,241,0.45)" }}
-            whileTap={{ scale: 0.97 }}
+          <MagneticButton
+            as={Link}
             to={user ? "/home" : "/register"}
-            className="inline-flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-[0_0_0_rgba(99,102,241,0)] hover:shadow-[0_0_28px_rgba(99,102,241,0.45)] transition-[background-color,box-shadow]"
           >
             {user ? "Go to Dashboard" : "Get Started — It's Free"}
             <ArrowRight size={16} />
-          </MotionLink>
+          </MagneticButton>
         </motion.div>
       </div>
 

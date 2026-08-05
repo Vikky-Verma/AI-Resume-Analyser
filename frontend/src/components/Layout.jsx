@@ -1,6 +1,8 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "./Navbar";
+import PublicNavbar from "./PublicNavbar";
+import { useAuth } from "../context/AuthContext";
 
 const variants = {
   initial: { opacity: 0, y: 8 },
@@ -10,10 +12,11 @@ const variants = {
 
 const Layout = () => {
   const location = useLocation();
+  const { token } = useAuth();
 
   return (
     <>
-      <Navbar />
+      {token ? <Navbar /> : <PublicNavbar />}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={location.pathname}

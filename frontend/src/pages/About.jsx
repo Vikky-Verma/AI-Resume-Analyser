@@ -125,7 +125,7 @@ const FEATURES = [
 const TECH_STACK = {
   Frontend: ["React 19", "Vite", "Tailwind CSS", "Framer Motion", "React Router v7", "Recharts"],
   Backend: ["Node.js", "Express", "PostgreSQL (Neon)", "Prisma ORM", "JWT Auth", "Zod"],
-  "AI & infra": ["Google Gemini", "Groq", "Cloudinary", "Resend (email)", "PDF/DOCX parsing"],
+  "AI & infra": ["Cloudflare Workers AI", "Cloudinary", "Brevo (email)", "PDF/DOCX parsing"],
 };
 
 const About = () => {

@@ -23,22 +23,20 @@ const PublicNavbar = () => {
         </span>
       </Link>
 
-      <div className="hidden sm:flex items-center gap-6">
+      <div className="flex items-center gap-6">
         <Link
           to="/about"
-          className="text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+          className="hidden sm:inline text-sm font-semibold text-slate-300 hover:text-white transition-colors"
         >
           About
         </Link>
         <Link
           to="/contact"
-          className="text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+          className="hidden sm:inline text-sm font-semibold text-slate-300 hover:text-white transition-colors"
         >
           Contact
         </Link>
-      </div>
 
-      <div className="flex items-center gap-3">
         {user ? (
           <MotionLink
             whileHover={{ scale: 1.04 }}
@@ -49,7 +47,7 @@ const PublicNavbar = () => {
             Go to Dashboard
           </MotionLink>
         ) : (
-          <>
+          <div className="flex items-center gap-3">
             <Link
               to="/login"
               className="px-4 py-2 text-slate-300 hover:text-white text-sm font-semibold transition-colors"
@@ -64,7 +62,7 @@ const PublicNavbar = () => {
             >
               Get Started
             </MotionLink>
-          </>
+          </div>
         )}
       </div>
     </nav>

@@ -20,6 +20,8 @@ const portfolioRoutes = require("./routes/portfolioRoutes");
 const builderResumeRoutes = require("./routes/builderResumeRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const pdfRoutes = require("./routes/pdfRoutes");
+const communityRoutes = require("./routes/communityRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 
 const app = express();
 
@@ -52,6 +54,8 @@ app.use("/api/resume-builder", builderResumeRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/report", pdfRoutes);
 app.use("/api/interview", interviewRoutes);
+app.use("/api/community", communityRoutes);
+app.use("/api/contact", contactRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 AI Resume Analyzer Backend Running");

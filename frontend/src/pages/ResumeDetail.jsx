@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../api/axios";
-import Navbar from "../components/Navbar";
 import ScoreCard from "../components/ScoreCard";
 import SkillBadge from "../components/SkillBadge";
 import toast from "react-hot-toast";
@@ -159,7 +158,6 @@ const ResumeDetail = () => {
 
   return (
     <div className="min-h-screen bg-[#0f1117]">
-      <Navbar />
       <div className="max-w-4xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>

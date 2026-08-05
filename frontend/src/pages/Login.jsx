@@ -23,7 +23,7 @@ const Login = () => {
     login(data.user, data.token);
 
     toast.success("Welcome back!");
-    navigate("/dashboard");
+    navigate("/home");
   } catch (err) {
     console.error(err);
     toast.error(err.response?.data?.message || "Login failed");

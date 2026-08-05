@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import API from "../api/axios";
-import Navbar from "../components/Navbar";
 import SkillBadge from "../components/SkillBadge";
 import CircularGauge from "../components/CircularGauge";
 import AnimatedBar from "../components/animations/AnimatedBar";
@@ -261,7 +260,6 @@ const ATSChecker = () => {
       )}
 
       <div className="relative">
-        <Navbar />
 
         {!result ? (
           <div className="max-w-6xl mx-auto px-6 py-14">

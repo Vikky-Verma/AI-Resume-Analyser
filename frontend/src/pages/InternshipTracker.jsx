@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import API from "../api/axios";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
 import {
   Plus,
   Loader2,
@@ -413,7 +412,6 @@ const InternshipTracker = () => {
 
   return (
     <div className="min-h-screen bg-[#07080c]">
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-10">
         {/* Header */}

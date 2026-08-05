@@ -16,12 +16,16 @@ import {
   KanbanSquare,
   Layout,
   Trophy,
-  LayoutDashboard,
   FilePlus2,
+  Home,
+  Users,
+  Info,
+  Mail,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 const PREPARE_ITEMS = [
+  { to: "/dashboard", label: "Resume Analysis", icon: FileText },
   { to: "/ats-checker", label: "ATS Checker", icon: FileText },
   { to: "/dsa-insights", label: "DSA Insights", icon: Code2 },
   { to: "/project-intelligence", label: "Project Intelligence", icon: FolderGit2 },
@@ -35,6 +39,7 @@ const TRACK_ITEMS = [
   { to: "/resume-builder", label: "Resume Builder", icon: FilePlus2 },
   { to: "/portfolio-builder", label: "Portfolio Builder", icon: Layout },
   { to: "/progress", label: "Progress", icon: Trophy },
+  { to: "/community", label: "Community", icon: Users },
 ];
 
 const SoonBadge = () => (
@@ -129,7 +134,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  // Shrink + blur the navbar once the page has scrolled a bit.
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -137,7 +141,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
     setMobileGroup(null);
@@ -187,7 +190,7 @@ const Navbar = () => {
     >
       {/* Logo + Links */}
       <div className="flex items-center gap-8">
-        <Link to="/dashboard" className="flex items-center gap-3 no-underline shrink-0">
+        <Link to="/home" className="flex items-center gap-3 no-underline shrink-0">
           <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center">
             <FileText size={18} className="text-white" />
           </div>
@@ -195,9 +198,9 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
-          <NavLink to="/dashboard" navKey="dashboard">
+          <NavLink to="/home" navKey="home">
             <span className="flex items-center gap-1.5">
-              <LayoutDashboard size={14} /> Dashboard
+              <Home size={14} /> Home
             </span>
           </NavLink>
           <DesktopDropdown label="Prepare" items={PREPARE_ITEMS} navKey="prepare" hovered={hoveredNav} setHovered={setHoveredNav} />
@@ -208,6 +211,21 @@ const Navbar = () => {
 
       {/* Right side */}
       <div className="flex items-center gap-3">
+        <Link
+          to="/about"
+          className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+        >
+          <Info size={14} />
+          About
+        </Link>
+        <Link
+          to="/contact"
+          className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+        >
+          <Mail size={14} />
+          Contact
+        </Link>
+
         {user ? (
           <div className="relative hidden sm:block" ref={userMenuRef}>
             <button
@@ -261,10 +279,24 @@ const Navbar = () => {
         >
           <div className="flex flex-col px-4 py-3">
             <Link
-              to="/dashboard"
+              to="/home"
               className="flex items-center gap-2 py-3 text-sm font-semibold text-slate-200 border-b border-[#242840]"
             >
-              <LayoutDashboard size={16} /> Dashboard
+              <Home size={16} /> Home
+            </Link>
+
+            <Link
+              to="/about"
+              className="flex items-center gap-2 py-3 text-sm font-semibold text-slate-200 border-b border-[#242840]"
+            >
+              <Info size={16} /> About
+            </Link>
+
+            <Link
+              to="/contact"
+              className="flex items-center gap-2 py-3 text-sm font-semibold text-slate-200 border-b border-[#242840]"
+            >
+              <Mail size={16} /> Contact
             </Link>
 
             {[

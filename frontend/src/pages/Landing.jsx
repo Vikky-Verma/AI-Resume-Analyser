@@ -141,12 +141,27 @@ const Landing = () => {
           </span>
         </div>
 
+        <div className="hidden sm:flex items-center gap-6">
+          <Link
+            to="/about"
+            className="text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+          >
+            About
+          </Link>
+          <Link
+            to="/contact"
+            className="text-sm font-semibold text-slate-300 hover:text-white transition-colors"
+          >
+            Contact
+          </Link>
+        </div>
+
         <div className="flex items-center gap-3">
           {user ? (
             <MotionLink
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
-              to="/dashboard"
+              to="/home"
               className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-xl transition-colors"
             >
               Go to Dashboard
@@ -225,7 +240,7 @@ const Landing = () => {
           <MotionLink
             whileHover={{ scale: 1.045, boxShadow: "0 0 28px rgba(99,102,241,0.45)" }}
             whileTap={{ scale: 0.97 }}
-            to={user ? "/dashboard" : "/register"}
+            to={user ? "/home" : "/register"}
             className="flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-colors"
           >
             {user ? "Go to Dashboard" : "Get Started Free"}
@@ -314,7 +329,7 @@ const Landing = () => {
           <MotionLink
             whileHover={{ scale: 1.045, boxShadow: "0 0 28px rgba(99,102,241,0.45)" }}
             whileTap={{ scale: 0.97 }}
-            to={user ? "/dashboard" : "/register"}
+            to={user ? "/home" : "/register"}
             className="inline-flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-colors"
           >
             {user ? "Go to Dashboard" : "Get Started — It's Free"}

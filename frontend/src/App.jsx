@@ -1,9 +1,8 @@
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import ScrollToTop from "./components/ScrollToTop";
-import AnimatedRoutes from "./components/animations/AnimatedRoutes";
+import Layout from "./components/Layout";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -25,12 +24,15 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import Progress from "./pages/Progress";
 import Pricing from "./pages/Pricing";
 import PortfolioPublic from "./pages/PortfolioPublic";
+import Home from "./pages/Home";
+import Community from "./pages/Community";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <ScrollToTop />
         <Toaster
           position="top-right"
           toastOptions={{
@@ -43,147 +45,163 @@ function App() {
             },
           }}
         />
-        <AnimatedRoutes>
+        <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/resume/:resumeId"
-            element={
-              <ProtectedRoute>
-                <ResumeDetail />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/interview"
-            element={
-              <ProtectedRoute>
-                <MockInterviewSetup />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/interview/new"
-            element={
-              <ProtectedRoute>
-                <MockInterviewSetup />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/ats-checker"
-            element={
-              <ProtectedRoute>
-                <ATSChecker />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/interview/:interviewId/room"
-            element={
-              <ProtectedRoute>
-                <InterviewRoom />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/interview/:interviewId/report"
-            element={
-              <ProtectedRoute>
-                <InterviewReport />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Future-phase placeholders (Phase 3, 4, 6) */}
-          <Route
-            path="/dsa-insights"
-            element={
-              <ProtectedRoute>
-                <DsaInsights />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/project-intelligence"
-            element={
-              <ProtectedRoute>
-                <ProjectIntelligence />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/ai-roadmap"
-            element={
-              <ProtectedRoute>
-                <AiRoadmap />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/company-prep"
-            element={
-              <ProtectedRoute>
-                <CompanyPrep />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/company-prep/:slug"
-            element={
-              <ProtectedRoute>
-                <CompanyPrepDetail />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/internship-tracker"
-            element={
-              <ProtectedRoute>
-                <InternshipTracker />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/resume-builder"
-            element={
-              <ProtectedRoute>
-                <ResumeBuilder />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/portfolio-builder"
-            element={
-              <ProtectedRoute>
-                <PortfolioBuilder />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/progress"
-            element={
-              <ProtectedRoute>
-                <Progress />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Pricing is public — pre-purchase info, no login wall */}
           <Route path="/pricing" element={<Pricing />} />
-          {/* Public portfolio pages — shareable with recruiters, no login wall */}
           <Route path="/portfolio/:slug" element={<PortfolioPublic />} />
-        </AnimatedRoutes>
+
+          <Route element={<Layout />}>
+            <Route
+              path="/home"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/community"
+              element={
+                <ProtectedRoute>
+                  <Community />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/resume/:resumeId"
+              element={
+                <ProtectedRoute>
+                  <ResumeDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/interview"
+              element={
+                <ProtectedRoute>
+                  <MockInterviewSetup />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/interview/new"
+              element={
+                <ProtectedRoute>
+                  <MockInterviewSetup />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ats-checker"
+              element={
+                <ProtectedRoute>
+                  <ATSChecker />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/interview/:interviewId/room"
+              element={
+                <ProtectedRoute>
+                  <InterviewRoom />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/interview/:interviewId/report"
+              element={
+                <ProtectedRoute>
+                  <InterviewReport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dsa-insights"
+              element={
+                <ProtectedRoute>
+                  <DsaInsights />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/project-intelligence"
+              element={
+                <ProtectedRoute>
+                  <ProjectIntelligence />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ai-roadmap"
+              element={
+                <ProtectedRoute>
+                  <AiRoadmap />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/company-prep"
+              element={
+                <ProtectedRoute>
+                  <CompanyPrep />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/company-prep/:slug"
+              element={
+                <ProtectedRoute>
+                  <CompanyPrepDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/internship-tracker"
+              element={
+                <ProtectedRoute>
+                  <InternshipTracker />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/resume-builder"
+              element={
+                <ProtectedRoute>
+                  <ResumeBuilder />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portfolio-builder"
+              element={
+                <ProtectedRoute>
+                  <PortfolioBuilder />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/progress"
+              element={
+                <ProtectedRoute>
+                  <Progress />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+          </Route>
+        </Routes>
       </BrowserRouter>
     </AuthProvider>
   );

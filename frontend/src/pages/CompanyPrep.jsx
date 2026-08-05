@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../api/axios";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
 import {
   Building2,
   Search,
@@ -165,7 +164,6 @@ const CompanyPrep = () => {
       <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-amber-500/10 rounded-full blur-[120px]" />
 
       <div className="relative">
-        <Navbar />
 
         <div className="max-w-6xl mx-auto px-6 py-12">
           {/* Header */}

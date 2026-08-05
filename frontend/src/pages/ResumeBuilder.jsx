@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import API from "../api/axios";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
 import ResumePreview from "../components/resumeBuilder/ResumePreview";
 import { RESUME_TEMPLATES, getTemplate } from "../data/resumeTemplates";
 import { COMPANY_PRESETS, getCompanyPreset } from "../data/companyPresets";
@@ -468,7 +467,6 @@ const ResumeBuilder = () => {
 
   return (
     <div className="min-h-screen bg-[#0f1117]">
-      <Navbar />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-8 pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">

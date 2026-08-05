@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
-import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
 import {
   Mic,
@@ -253,7 +252,6 @@ const MockInterviewSetup = () => {
       )}
 
       <div className="relative">
-        <Navbar />
 
         {isLanding ? (
           <div className="max-w-6xl mx-auto px-6 py-14">

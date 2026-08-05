@@ -54,6 +54,26 @@ const computeStreaks = (dayKeys) => {
 };
 
 /**
+ * Activity count per day for the last `days` days (oldest -> newest).
+ * Used to render a GitHub-style streak calendar on the dashboard.
+ */
+const computeCalendarActivity = (events, days = 126) => {
+  const counts = {};
+  events.filter(Boolean).forEach((d) => {
+    const key = toDateKey(d);
+    counts[key] = (counts[key] || 0) + 1;
+  });
+
+  const cells = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date(Date.now() - i * DAY_MS);
+    const key = toDateKey(date);
+    cells.push({ date: key, count: counts[key] || 0 });
+  }
+  return cells;
+};
+
+/**
  * Activity count per day for the last 7 days (oldest -> newest).
  */
 const computeWeeklyActivity = (events) => {
@@ -180,6 +200,7 @@ const getProgressSummary = async (userId) => {
   const dayKeys = buildActivityDayKeys(activityEvents);
   const streak = computeStreaks(dayKeys);
   const weeklyActivity = computeWeeklyActivity(activityEvents);
+  const calendarActivity = computeCalendarActivity(activityEvents);
 
   const achievements = buildAchievements({
     resumesCount,
@@ -192,6 +213,7 @@ const getProgressSummary = async (userId) => {
   return {
     streak,
     weeklyActivity,
+    calendarActivity,
     modules: {
       resumes: resumesCount,
       mockInterviews: mockInterviewsCompleted,

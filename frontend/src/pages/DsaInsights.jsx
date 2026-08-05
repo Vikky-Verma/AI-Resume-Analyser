@@ -1,7 +1,6 @@
 import { useState } from "react";
 import API from "../api/axios";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -168,7 +167,6 @@ const DsaInsights = () => {
       )}
 
       <div className="relative">
-        <Navbar />
 
         {!hasResult ? (
           <div className="max-w-6xl mx-auto px-6 py-14">

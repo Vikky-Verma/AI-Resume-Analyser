@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import API from "../api/axios";
-import Navbar from "../components/Navbar";
 import {
   Trophy,
   Flame,
@@ -104,7 +103,6 @@ const Progress = () => {
       <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-amber-500/10 rounded-full blur-[120px]" />
 
       <div className="relative">
-        <Navbar />
 
         <div className="max-w-5xl mx-auto px-6 py-12">
           {/* Header */}

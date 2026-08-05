@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const SOCIALS = [
@@ -82,7 +83,18 @@ const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="mt-8 pt-6 border-t border-[#1e2233]">
+        <div className="mt-8 pt-6 border-t border-[#1e2233] flex flex-col items-center gap-4">
+          <div className="flex items-center gap-6">
+            <Link to="/about" className="text-sm text-slate-400 hover:text-white transition-colors">
+              About
+            </Link>
+            <Link to="/contact" className="text-sm text-slate-400 hover:text-white transition-colors">
+              Contact
+            </Link>
+            <Link to="/pricing" className="text-sm text-slate-400 hover:text-white transition-colors">
+              Pricing
+            </Link>
+          </div>
           <p className="text-center text-sm text-slate-500">
             © {new Date().getFullYear()} All Rights Reserved.
           </p>

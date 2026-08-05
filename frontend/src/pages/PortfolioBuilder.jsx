@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import API from "../api/axios";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
 import {
   Loader2,
   Plus,
@@ -228,7 +227,6 @@ const PortfolioBuilder = () => {
   if (loading || !portfolio) {
     return (
       <div className="min-h-screen bg-[#07080c]">
-        <Navbar />
         <div className="flex items-center justify-center py-32">
           <Loader2 size={22} className="text-indigo-400 animate-spin" />
         </div>
@@ -238,7 +236,6 @@ const PortfolioBuilder = () => {
 
   return (
     <div className="min-h-screen bg-[#07080c]">
-      <Navbar />
 
       <div className="max-w-4xl mx-auto px-6 py-10">
         {/* Header */}

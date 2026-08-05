@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import API from "../api/axios";
-import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
 import {
   Route as RouteIcon,
@@ -188,7 +187,6 @@ const AiRoadmap = () => {
       )}
 
       <div className="relative">
-        <Navbar />
 
         {!result ? (
           analyzing ? (

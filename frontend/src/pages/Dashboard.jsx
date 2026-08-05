@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
-import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
 import { CloudUpload, FileText, Trash2, Eye, Loader2, Sparkles, ScanSearch, Gauge, Layers, X, ArrowRight } from "lucide-react";
 
@@ -147,7 +146,6 @@ const Dashboard = () => {
       <div className="pointer-events-none absolute top-40 -right-32 w-[28rem] h-[28rem] bg-blue-500/10 rounded-full blur-[120px]" />
 
       <div className="relative">
-        <Navbar />
 
         <div className="max-w-6xl mx-auto px-6 py-14">
           <div className="grid lg:grid-cols-[1.05fr_1fr] gap-16 items-start">

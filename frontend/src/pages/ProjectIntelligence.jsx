@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import API from "../api/axios";
-import Navbar from "../components/Navbar";
 import SkillBadge from "../components/SkillBadge";
 import toast from "react-hot-toast";
 import {
@@ -172,7 +171,6 @@ const ProjectIntelligence = () => {
       )}
 
       <div className="relative">
-        <Navbar />
 
         {!result ? (
           analyzing ? (

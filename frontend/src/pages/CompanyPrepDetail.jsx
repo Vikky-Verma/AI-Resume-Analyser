@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import API from "../api/axios";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
 import {
   ArrowLeft,
   Loader2,
@@ -193,7 +192,6 @@ const CompanyPrepDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#07090f]">
-        <Navbar />
         <div className="flex items-center justify-center py-32">
           <Loader2 size={24} className="text-indigo-400 animate-spin" />
         </div>
@@ -204,7 +202,6 @@ const CompanyPrepDetail = () => {
   if (!company) {
     return (
       <div className="min-h-screen bg-[#07090f]">
-        <Navbar />
         <div className="max-w-2xl mx-auto px-6 py-24 text-center">
           <p className="text-slate-400">Company not found.</p>
           <Link
@@ -224,7 +221,6 @@ const CompanyPrepDetail = () => {
 
   return (
     <div className="min-h-screen bg-[#07090f]">
-      <Navbar />
 
       <div className="max-w-5xl mx-auto px-6 py-10">
         <Link

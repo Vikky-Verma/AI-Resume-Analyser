@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
-import Navbar from "../components/Navbar";
 import ScoreCard from "../components/ScoreCard";
 import toast from "react-hot-toast";
 import {
@@ -65,7 +64,6 @@ const InterviewReport = () => {
 
   return (
     <div className="min-h-screen bg-[#07090f]">
-      <Navbar />
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
@@ -178,7 +176,7 @@ const InterviewReport = () => {
             <RotateCcw size={15} /> New Mock Interview
           </Link>
           <Link
-            to="/dashboard"
+            to="/home"
             className="flex items-center gap-2 px-5 py-2.5 bg-[#11151d] border border-[#232838] hover:border-violet-500/50 text-slate-300 text-sm font-semibold rounded-xl transition-all"
           >
             <LayoutDashboard size={15} /> Back to Dashboard

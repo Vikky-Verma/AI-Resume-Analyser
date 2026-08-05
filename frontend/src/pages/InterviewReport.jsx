@@ -54,7 +54,7 @@ const InterviewReport = () => {
 
   if (loading || !interview) {
     return (
-      <div className="min-h-screen bg-[#07090f] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <Loader2 size={32} className="text-violet-400 animate-spin" />
       </div>
     );
@@ -63,7 +63,7 @@ const InterviewReport = () => {
   const verdictStyle = VERDICT_STYLE[interview.verdict] || VERDICT_STYLE["Hire"];
 
   return (
-    <div className="min-h-screen bg-[#07090f]">
+    <div className="min-h-screen">
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">

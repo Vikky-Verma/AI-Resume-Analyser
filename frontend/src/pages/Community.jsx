@@ -250,7 +250,7 @@ const Community = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090f]">
+    <div className="min-h-screen">
       <div className="pointer-events-none fixed -top-40 -left-40 w-[32rem] h-[32rem] bg-emerald-500/10 rounded-full blur-[120px]" />
       <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-indigo-500/10 rounded-full blur-[120px]" />
 

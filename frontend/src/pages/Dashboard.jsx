@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import toast from "react-hot-toast";
 import { CloudUpload, FileText, Trash2, Eye, Loader2, Sparkles, ScanSearch, Gauge, Layers, X, ArrowRight } from "lucide-react";
+import TiltCard from "../components/effects/TiltCard";
+import GradientBorder from "../components/effects/GradientBorder";
+import MagneticButton from "../components/effects/MagneticButton";
 
 const FEATURES = [
   {
@@ -141,7 +144,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#07080d] relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-indigo-600/15 rounded-full blur-[120px]" />
       <div className="pointer-events-none absolute top-40 -right-32 w-[28rem] h-[28rem] bg-blue-500/10 rounded-full blur-[120px]" />
 
@@ -174,7 +177,7 @@ const Dashboard = () => {
               </p>
 
               {/* Live-preview mockup */}
-              <div className="mt-9 bg-[#12141a] border border-[#22262f] rounded-2xl p-5 max-w-md">
+              <TiltCard maxTilt={5} className="mt-9 bg-[#12141a]/80 backdrop-blur-xl border border-[#22262f] rounded-2xl p-5 max-w-md">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[11px] text-slate-500 font-medium">
                     Extracted from resume.pdf
@@ -201,7 +204,7 @@ const Dashboard = () => {
                     87% Match
                   </span>
                 </div>
-              </div>
+              </TiltCard>
 
               {/* Feature tiles */}
               <div className="mt-9 space-y-4">
@@ -228,8 +231,13 @@ const Dashboard = () => {
 
             {/* ───────────────────── Right: Upload ───────────────────── */}
             <div>
-              <div className="p-[1px] rounded-3xl bg-gradient-to-br from-indigo-500/40 via-blue-500/15 to-transparent">
-                <div className="bg-[#0a0b11] rounded-3xl p-7 sm:p-8">
+              <GradientBorder
+                borderRadius="1.5rem"
+                borderWidth={1}
+                colors="rgba(99,102,241,0.5), rgba(59,130,246,0.15), transparent, rgba(99,102,241,0.5)"
+                duration={8}
+              >
+                <div className="bg-[#0a0b11]/90 backdrop-blur-xl rounded-3xl p-7 sm:p-8">
                   <h2 className="text-white font-bold text-xl">
                     Add a resume
                   </h2>
@@ -251,7 +259,7 @@ const Dashboard = () => {
                     className={`rounded-2xl border transition-all ${
                       dragOver
                         ? "border-indigo-500 bg-indigo-950/20"
-                        : "border-[#22262f] bg-[#12141a]"
+                        : "border-[#22262f] bg-[#12141a]/70 backdrop-blur-sm"
                     } ${selectedFile ? "p-4" : "p-10"}`}
                   >
                     <input
@@ -314,10 +322,12 @@ const Dashboard = () => {
                     )}
                   </div>
 
-                  <button
+                  <MagneticButton
+                    as="button"
                     type="button"
                     onClick={handleContinue}
                     disabled={!selectedFile || uploading}
+                    strength={selectedFile ? 14 : 0}
                     className="w-full mt-5 flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-full transition-all"
                   >
                     {uploading ? (
@@ -329,9 +339,9 @@ const Dashboard = () => {
                         Upload Resume <ArrowRight size={16} />
                       </>
                     )}
-                  </button>
+                  </MagneticButton>
                 </div>
-              </div>
+              </GradientBorder>
             </div>
           </div>
 
@@ -348,7 +358,7 @@ const Dashboard = () => {
                 <Loader2 size={32} className="text-indigo-400 animate-spin" />
               </div>
             ) : resumes.length === 0 ? (
-              <div className="bg-[#12141a] border border-[#22262f] rounded-2xl p-16 text-center">
+              <div className="bg-[#12141a]/70 backdrop-blur-xl border border-[#22262f] rounded-2xl p-16 text-center">
                 <FileText size={48} className="text-[#22262f] mx-auto mb-4" />
                 <p className="text-white font-semibold text-lg">No resumes yet</p>
                 <p className="text-slate-500 text-sm mt-2">
@@ -363,7 +373,7 @@ const Dashboard = () => {
                   return (
                     <div
                       key={resume.id}
-                      className="bg-[#12141a] border border-[#22262f] rounded-2xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:border-indigo-500/40 transition-all group"
+                      className="bg-[#12141a]/70 backdrop-blur-xl border border-[#22262f] rounded-2xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:border-indigo-500/40 hover:shadow-[0_12px_32px_-16px_rgba(99,102,241,0.35)] transition-all group"
                     >
                       {/* Left Side */}
                       <div className="flex items-center gap-4 min-w-0">
@@ -404,13 +414,15 @@ const Dashboard = () => {
 
                       {/* Right Side Buttons */}
                       <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-                        <button
+                        <MagneticButton
+                          as="button"
                           onClick={() => navigate(`/resume/${resume.id}`)}
+                          strength={8}
                           className="flex items-center justify-center gap-2 flex-1 sm:flex-none px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold rounded-xl transition-all"
                         >
                           <Eye size={13} />
                           Analyze
-                        </button>
+                        </MagneticButton>
 
                         <button
                           onClick={() => handleDelete(resume.id)}

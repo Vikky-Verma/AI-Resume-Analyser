@@ -191,7 +191,7 @@ const CompanyPrepDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#07090f]">
+      <div className="min-h-screen">
         <div className="flex items-center justify-center py-32">
           <Loader2 size={24} className="text-indigo-400 animate-spin" />
         </div>
@@ -201,7 +201,7 @@ const CompanyPrepDetail = () => {
 
   if (!company) {
     return (
-      <div className="min-h-screen bg-[#07090f]">
+      <div className="min-h-screen">
         <div className="max-w-2xl mx-auto px-6 py-24 text-center">
           <p className="text-slate-400">Company not found.</p>
           <Link
@@ -220,7 +220,7 @@ const CompanyPrepDetail = () => {
   const diff = company.difficultyBreakdown || {};
 
   return (
-    <div className="min-h-screen bg-[#07090f]">
+    <div className="min-h-screen">
 
       <div className="max-w-5xl mx-auto px-6 py-10">
         <Link

@@ -223,14 +223,14 @@ const InterviewRoom = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#07090f] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <Loader2 size={32} className="text-violet-400 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#07090f]">
+    <div className="min-h-screen">
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between flex-wrap gap-3 mb-6">

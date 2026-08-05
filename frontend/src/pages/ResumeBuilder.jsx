@@ -459,14 +459,14 @@ const ResumeBuilder = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="animate-spin text-indigo-400" size={28} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1117]">
+    <div className="min-h-screen">
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 pt-8 pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">

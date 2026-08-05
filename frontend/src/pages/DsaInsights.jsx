@@ -158,7 +158,7 @@ const DsaInsights = () => {
   const hasResult = Boolean(currentStats);
 
   return (
-    <div className="min-h-screen bg-[#07090f] relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       {!hasResult && (
         <>
           <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-amber-500/10 rounded-full blur-[120px] animate-float-blob" />

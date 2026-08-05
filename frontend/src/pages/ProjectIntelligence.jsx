@@ -162,7 +162,7 @@ const ProjectIntelligence = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090f] relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       {!result && (
         <>
           <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-indigo-600/15 rounded-full blur-[120px]" />

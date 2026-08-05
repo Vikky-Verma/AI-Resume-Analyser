@@ -14,7 +14,7 @@ const ComingSoon = ({
   features = [],
 }) => {
   return (
-    <div className="min-h-screen bg-[#0f1120] text-white">
+    <div className="min-h-screen text-white">
       <Navbar />
 
       <div className="max-w-2xl mx-auto px-6 py-24 flex flex-col items-center text-center">

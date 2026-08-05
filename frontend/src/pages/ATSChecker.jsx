@@ -5,6 +5,9 @@ import CircularGauge from "../components/CircularGauge";
 import AnimatedBar from "../components/animations/AnimatedBar";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import TiltCard from "../components/effects/TiltCard";
+import GradientBorder from "../components/effects/GradientBorder";
+import MagneticButton from "../components/effects/MagneticButton";
 import {
   ClipboardCheck,
   CloudUpload,
@@ -96,8 +99,8 @@ const toArr = (val) => {
 const Panel = ({ title, icon, children, tone = "default" }) => {
   const toneClasses =
     tone === "danger"
-      ? "bg-red-950/30 border-red-900/50"
-      : "bg-[#11151d] border-[#232838]";
+      ? "bg-red-950/30 backdrop-blur-xl border-red-900/50"
+      : "bg-[#11151d]/80 backdrop-blur-xl border-[#232838]";
   const titleClasses = tone === "danger" ? "text-red-400" : "text-white";
 
   return (
@@ -251,7 +254,7 @@ const ATSChecker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090f] relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       {!result && (
         <>
           <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-teal-600/15 rounded-full blur-[120px]" />
@@ -288,7 +291,7 @@ const ATSChecker = () => {
                 </p>
 
                 {/* Live-preview mockup */}
-                <div className="mt-9 bg-[#12141a] border border-[#22262f] rounded-2xl p-5 max-w-md">
+                <TiltCard maxTilt={5} className="mt-9 bg-[#12141a]/80 backdrop-blur-xl border border-[#22262f] rounded-2xl p-5 max-w-md">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[11px] text-slate-500 font-medium">
                       ATS Score
@@ -321,7 +324,7 @@ const ATSChecker = () => {
                       layer" — vs. "Worked on backend performance"
                     </p>
                   </div>
-                </div>
+                </TiltCard>
 
                 {/* Feature tiles */}
                 <div className="mt-9 space-y-4">
@@ -347,11 +350,11 @@ const ATSChecker = () => {
 
                 {/* Chips */}
                 <div className="mt-9 flex items-center gap-2 flex-wrap">
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-[#12141a] border border-[#22262f] text-slate-300 text-xs font-semibold rounded-full">
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-[#12141a]/70 backdrop-blur-sm border border-[#22262f] text-slate-300 text-xs font-semibold rounded-full">
                     <Target size={12} className="text-teal-400" />
                     Career Roadmap
                   </span>
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-[#12141a] border border-[#22262f] text-slate-300 text-xs font-semibold rounded-full">
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-[#12141a]/70 backdrop-blur-sm border border-[#22262f] text-slate-300 text-xs font-semibold rounded-full">
                     <Briefcase size={12} className="text-teal-400" />
                     Job Description Match
                   </span>
@@ -360,8 +363,13 @@ const ATSChecker = () => {
 
               {/* ───────────────────── Right: Form ───────────────────── */}
               <div>
-                <div className="p-[1px] rounded-3xl bg-gradient-to-br from-teal-500/40 via-indigo-500/15 to-transparent">
-                  <div className="bg-[#0a0c11] rounded-3xl p-7 sm:p-8">
+                <GradientBorder
+                  borderRadius="1.5rem"
+                  borderWidth={1}
+                  colors="rgba(45,212,191,0.5), rgba(99,102,241,0.15), transparent, rgba(45,212,191,0.5)"
+                  duration={8}
+                >
+                  <div className="bg-[#0a0c11]/90 backdrop-blur-xl rounded-3xl p-7 sm:p-8">
                     <h2 className="text-white font-bold text-xl">
                       Scan your resume
                     </h2>
@@ -381,7 +389,7 @@ const ATSChecker = () => {
                               className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                                 useExisting && selectedResumeId === r.id
                                   ? "border-teal-500 bg-teal-950/20"
-                                  : "border-[#22262f] bg-[#12141a]"
+                                  : "border-[#22262f] bg-[#12141a]/70 backdrop-blur-sm"
                               }`}
                             >
                               <input
@@ -429,7 +437,7 @@ const ATSChecker = () => {
                       className={`rounded-2xl border transition-all ${
                         dragOver
                           ? "border-teal-500 bg-teal-950/20"
-                          : "border-[#22262f] bg-[#12141a]"
+                          : "border-[#22262f] bg-[#12141a]/70 backdrop-blur-sm"
                       } ${file ? "p-4" : "p-10"}`}
                     >
                       <input
@@ -520,7 +528,8 @@ const ATSChecker = () => {
                       </div>
                     </div>
 
-                    <button
+                    <MagneticButton
+                      as="button"
                       type="button"
                       onClick={handleAnalyze}
                       disabled={analyzing || (useExisting ? !selectedResumeId : !file)}
@@ -536,9 +545,9 @@ const ATSChecker = () => {
                           Analyze Resume <ArrowRight size={16} />
                         </>
                       )}
-                    </button>
+                    </MagneticButton>
                   </div>
-                </div>
+                </GradientBorder>
               </div>
             </div>
           </div>
@@ -549,47 +558,51 @@ const ATSChecker = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 flex items-center justify-between flex-wrap gap-4"
           >
-            <div>
-              <div className="flex items-center gap-2">
-                <ClipboardCheck size={18} className="text-teal-400" />
-                <h1 className="text-white font-extrabold text-xl">
-                  ATS Evaluation Complete
-                </h1>
-              </div>
-              <p className="text-slate-500 text-sm mt-1">
-                Target Role: {result.targetRole} &nbsp;|&nbsp; Level:{" "}
-                {result.experienceLevel}
-                {result.domain && (
-                  <>
-                    {" "}
-                    &nbsp;|&nbsp; Domain: {result.domain}
-                  </>
-                )}
-              </p>
-            </div>
-            <div className="flex items-center gap-8">
-              {result.resumeScore !== undefined && (
-                <div className="text-right">
-                  <p className="text-2xl font-extrabold text-indigo-400">
-                    {result.resumeScore}
-                  </p>
-                  <p className="text-[10px] font-bold tracking-widest uppercase text-slate-500">
-                    Resume Score
-                  </p>
+            <TiltCard
+              maxTilt={3}
+              className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-6 flex items-center justify-between flex-wrap gap-4"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  <ClipboardCheck size={18} className="text-teal-400" />
+                  <h1 className="text-white font-extrabold text-xl">
+                    ATS Evaluation Complete
+                  </h1>
                 </div>
-              )}
-              <div className="flex items-center gap-3">
-                <CircularGauge score={result.atsScore} max={100} size={72} strokeWidth={7} />
-                <p
-                  className="text-xs font-bold tracking-widest uppercase"
-                  style={{ color: verdictColor(result.verdict) }}
-                >
-                  {result.verdict}
+                <p className="text-slate-500 text-sm mt-1">
+                  Target Role: {result.targetRole} &nbsp;|&nbsp; Level:{" "}
+                  {result.experienceLevel}
+                  {result.domain && (
+                    <>
+                      {" "}
+                      &nbsp;|&nbsp; Domain: {result.domain}
+                    </>
+                  )}
                 </p>
               </div>
-            </div>
+              <div className="flex items-center gap-8">
+                {result.resumeScore !== undefined && (
+                  <div className="text-right">
+                    <p className="text-2xl font-extrabold text-indigo-400">
+                      {result.resumeScore}
+                    </p>
+                    <p className="text-[10px] font-bold tracking-widest uppercase text-slate-500">
+                      Resume Score
+                    </p>
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <CircularGauge score={result.atsScore} max={100} size={72} strokeWidth={7} />
+                  <p
+                    className="text-xs font-bold tracking-widest uppercase"
+                    style={{ color: verdictColor(result.verdict) }}
+                  >
+                    {result.verdict}
+                  </p>
+                </div>
+              </div>
+            </TiltCard>
           </motion.div>
 
           {/* Best Role Matches */}
@@ -699,29 +712,30 @@ const ATSChecker = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-40px" }}
                     transition={{ duration: 0.35, delay: (i % 2) * 0.08 }}
-                    className="bg-[#11151d] border border-[#232838] rounded-xl p-4"
                   >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-slate-200 text-sm font-bold">
-                        {cat.category}
-                      </span>
-                      <span
-                        className="text-sm font-extrabold"
-                        style={{ color: scoreColor(cat.score) }}
-                      >
-                        {cat.score}/10
-                      </span>
-                    </div>
-                    <p className="text-slate-500 text-xs leading-relaxed mb-2.5">
-                      {cat.note}
-                    </p>
-                    <AnimatedBar
-                      percent={(cat.score / 10) * 100}
-                      trackClassName="h-1.5 rounded-full bg-[#232838] overflow-hidden"
-                      fillClassName="h-full rounded-full"
-                      color={scoreColor(cat.score)}
-                      delay={(i % 2) * 0.08}
-                    />
+                    <TiltCard maxTilt={5} className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-xl p-4">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-slate-200 text-sm font-bold">
+                          {cat.category}
+                        </span>
+                        <span
+                          className="text-sm font-extrabold"
+                          style={{ color: scoreColor(cat.score) }}
+                        >
+                          {cat.score}/10
+                        </span>
+                      </div>
+                      <p className="text-slate-500 text-xs leading-relaxed mb-2.5">
+                        {cat.note}
+                      </p>
+                      <AnimatedBar
+                        percent={(cat.score / 10) * 100}
+                        trackClassName="h-1.5 rounded-full bg-[#232838] overflow-hidden"
+                        fillClassName="h-full rounded-full"
+                        color={scoreColor(cat.score)}
+                        delay={(i % 2) * 0.08}
+                      />
+                    </TiltCard>
                   </motion.div>
                 ))}
               </div>
@@ -840,7 +854,7 @@ const ATSChecker = () => {
                 {result.lineByLineFixes.map((fix, i) => (
                   <div
                     key={i}
-                    className="bg-[#11151d] border border-[#232838] rounded-xl p-4 space-y-3"
+                    className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-xl p-4 space-y-3"
                   >
                     <p className="text-slate-400 text-xs italic">
                       "{fix.reasoning}"
@@ -896,9 +910,11 @@ const ATSChecker = () => {
               onChange={(e) => setJobDesc(e.target.value)}
               className="w-full bg-[#1a1f2e] border border-[#232838] rounded-xl p-4 text-sm text-white placeholder-slate-500 outline-none focus:border-amber-500 transition-colors resize-y mb-3"
             />
-            <button
+            <MagneticButton
+              as="button"
               onClick={runJobMatch}
               disabled={matching}
+              strength={10}
               className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-all"
             >
               {matching ? (
@@ -910,7 +926,7 @@ const ATSChecker = () => {
                   <ClipboardList size={15} /> Match Resume
                 </>
               )}
-            </button>
+            </MagneticButton>
 
             {jobMatch && (
               <div className="mt-6 space-y-5">
@@ -975,14 +991,15 @@ const ATSChecker = () => {
             )}
           </Panel>
 
-          <button
+          <MagneticButton
+            as="button"
             type="button"
             onClick={reset}
             className="w-full py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2"
           >
             <CheckCircle2 size={16} />
             Check Another Resume
-          </button>
+          </MagneticButton>
         </div>
       )}
       </div>

@@ -84,7 +84,7 @@ const VerifyOtp = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-[#0f1117] px-4"
+      className="min-h-screen flex items-center justify-center px-4"
       style={{ background: "radial-gradient(ellipse at 50% 0%, #1e1b4b 0%, #0f1117 60%)" }}
     >
       <div className="w-full max-w-md">

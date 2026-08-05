@@ -35,7 +35,7 @@ const normalizeUrl = (url) => {
 };
 
 const NotFound = () => (
-  <div className="min-h-screen bg-[#07080c] flex flex-col items-center justify-center px-6 text-center">
+  <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
     <FileQuestion size={32} className="text-slate-700 mb-4" />
     <h1 className="text-lg font-bold text-white mb-1.5">This portfolio isn't available</h1>
     <p className="text-slate-500 text-sm max-w-sm">
@@ -73,7 +73,7 @@ const PortfolioPublic = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#07080c] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <Loader2 size={22} className="text-indigo-400 animate-spin" />
       </div>
     );
@@ -84,7 +84,7 @@ const PortfolioPublic = () => {
   const links = Object.entries(portfolio.links || {}).filter(([, v]) => v);
 
   return (
-    <div className="min-h-screen bg-[#07080c]">
+    <div className="min-h-screen">
       <div className="max-w-3xl mx-auto px-6 py-16 sm:py-20">
         {/* Hero */}
         <div className="flex items-start gap-5">

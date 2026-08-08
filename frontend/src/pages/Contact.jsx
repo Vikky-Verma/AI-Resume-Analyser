@@ -3,6 +3,8 @@ import toast from "react-hot-toast";
 import Footer from "../components/Footer";
 import API from "../api/axios";
 import { Mail, MessageCircle, Send, Loader2 } from "lucide-react";
+import TiltCard from "../components/effects/TiltCard";
+import MagneticButton from "../components/effects/MagneticButton";
 
 // lucide-react's pinned version here doesn't ship a "Github" brand icon,
 // so this is a small inline mark instead — same size/className API as
@@ -63,10 +65,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="pointer-events-none fixed -top-40 -left-40 w-[32rem] h-[32rem] bg-indigo-500/10 rounded-full blur-[120px]" />
-      <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-teal-500/10 rounded-full blur-[120px]" />
-
+    <div className="min-h-screen relative">
       <div className="relative">
 
         <div className="max-w-4xl mx-auto px-6 py-16">
@@ -89,9 +88,10 @@ const Contact = () => {
             {/* Contact methods */}
             <div className="flex flex-col gap-3">
               {METHODS.map(({ icon: Icon, title, detail }) => (
-                <div
+                <TiltCard
                   key={title}
-                  className="flex items-start gap-3 bg-[#171a2c] border border-[#2e3150] rounded-2xl p-4"
+                  maxTilt={5}
+                  className="flex items-start gap-3 bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-4"
                 >
                   <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
                     <Icon size={16} className="text-indigo-400" />
@@ -109,14 +109,14 @@ const Contact = () => {
                       <p className="text-xs text-slate-500 mt-0.5">{detail}</p>
                     )}
                   </div>
-                </div>
+                </TiltCard>
               ))}
             </div>
 
             {/* Form */}
             <form
               onSubmit={handleSubmit}
-              className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6"
+              className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-6"
             >
               <div className="mb-4">
                 <label className="block text-[11px] font-semibold tracking-wide uppercase text-slate-500 mb-2">
@@ -161,7 +161,8 @@ const Contact = () => {
                   className="w-full bg-[#0f1120] border border-[#2e3150] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 resize-none"
                 />
               </div>
-              <button
+              <MagneticButton
+                as="button"
                 type="submit"
                 disabled={sending}
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-colors"
@@ -172,7 +173,7 @@ const Contact = () => {
                   <Send size={15} />
                 )}
                 {sending ? "Sending…" : "Send message"}
-              </button>
+              </MagneticButton>
             </form>
           </div>
         </div>

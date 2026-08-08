@@ -14,6 +14,7 @@ import {
   ListChecks,
   Sparkles,
 } from "lucide-react";
+import MagneticButton from "../components/effects/MagneticButton";
 
 const MAX_FILE_MB = 5;
 const TIMEFRAMES = [
@@ -181,8 +182,6 @@ const AiRoadmap = () => {
     <div className="min-h-screen relative overflow-hidden">
       {!result && (
         <>
-          <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-rose-600/10 rounded-full blur-[120px]" />
-          <div className="pointer-events-none absolute top-40 -right-32 w-[28rem] h-[28rem] bg-indigo-500/15 rounded-full blur-[120px]" />
         </>
       )}
 
@@ -191,7 +190,7 @@ const AiRoadmap = () => {
         {!result ? (
           analyzing ? (
             <div className="max-w-2xl mx-auto px-6 py-16">
-              <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-10">
+              <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-10">
                 <div className="flex flex-col gap-4">
                   {STEPS.map((label, i) => (
                     <div key={i} className="flex items-center gap-3">
@@ -252,7 +251,7 @@ const AiRoadmap = () => {
                   </p>
 
                   {/* Live preview mockup */}
-                  <div className="mt-9 bg-[#12141a] border border-[#22262f] rounded-2xl p-5 max-w-md">
+                  <div className="mt-9 bg-[#12141a]/80 backdrop-blur-xl border border-[#22262f] rounded-2xl p-5 max-w-md">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-[11px] text-slate-500 font-medium">
                         Readiness Score
@@ -456,7 +455,8 @@ const AiRoadmap = () => {
                         </div>
                       )}
 
-                      <button
+                      <MagneticButton
+                        as="button"
                         type="button"
                         onClick={handleGenerate}
                         disabled={
@@ -476,7 +476,7 @@ const AiRoadmap = () => {
                             Build My Roadmap <ArrowRight size={16} />
                           </>
                         )}
-                      </button>
+                      </MagneticButton>
                     </div>
                   </div>
                 </div>
@@ -486,7 +486,7 @@ const AiRoadmap = () => {
         ) : (
           <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
             {/* Header */}
-            <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 flex items-center justify-between flex-wrap gap-4">
+            <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-6 flex items-center justify-between flex-wrap gap-4">
               <div>
                 <div className="flex items-center gap-2">
                   <RouteIcon size={18} className="text-rose-400" />
@@ -548,7 +548,7 @@ const AiRoadmap = () => {
             </div>
 
             {result.finalReadinessNote && (
-              <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6">
+              <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-6">
                 <h2 className="text-white font-bold text-sm mb-2">
                   What "Job-Ready" Looks Like By The End
                 </h2>

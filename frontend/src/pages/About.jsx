@@ -1,4 +1,5 @@
 import Footer from "../components/Footer";
+import TiltCard from "../components/effects/TiltCard";
 import {
   Info,
   User,
@@ -61,7 +62,7 @@ const Section = ({ icon: Icon, eyebrow, title, children }) => (
 
 const FACTS = [
   { value: "Solo", label: "Built end-to-end" },
-  { value: "MERN + Prisma", label: "Core stack" },
+  { value: "PERN + Prisma", label: "Core stack" },
   { value: "Pre-final year", label: "B.Tech, IT" },
   { value: "Open source", label: "Code on GitHub" },
 ];
@@ -130,10 +131,7 @@ const TECH_STACK = {
 
 const About = () => {
   return (
-    <div className="min-h-screen">
-      <div className="pointer-events-none fixed -top-40 -left-40 w-[32rem] h-[32rem] bg-indigo-500/10 rounded-full blur-[120px]" />
-      <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-violet-500/10 rounded-full blur-[120px]" />
-
+    <div className="min-h-screen relative">
       <div className="relative">
 
         <div className="max-w-4xl mx-auto px-6 py-16">
@@ -158,13 +156,14 @@ const About = () => {
           {/* Facts strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
             {FACTS.map((s) => (
-              <div
+              <TiltCard
                 key={s.label}
-                className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5 text-center"
+                maxTilt={5}
+                className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5 text-center"
               >
                 <p className="text-lg sm:text-xl font-extrabold text-white">{s.value}</p>
                 <p className="text-[11px] text-slate-500 mt-1">{s.label}</p>
-              </div>
+              </TiltCard>
             ))}
           </div>
 
@@ -213,16 +212,17 @@ const About = () => {
           <Section icon={Rocket} eyebrow="For You" title="How this actually helps you">
             <div className="grid sm:grid-cols-2 gap-4">
               {BENEFITS.map(({ icon: Icon, title, desc }) => (
-                <div
+                <TiltCard
                   key={title}
-                  className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5"
+                  maxTilt={5}
+                  className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5"
                 >
                   <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-3">
                     <Icon size={17} className="text-indigo-400" />
                   </div>
                   <p className="text-white font-bold text-sm mb-1.5">{title}</p>
                   <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
-                </div>
+                </TiltCard>
               ))}
             </div>
           </Section>
@@ -235,9 +235,10 @@ const About = () => {
             </p>
             <div className="grid sm:grid-cols-3 gap-4">
               {Object.entries(TECH_STACK).map(([group, items]) => (
-                <div
+                <TiltCard
                   key={group}
-                  className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5"
+                  maxTilt={5}
+                  className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5"
                 >
                   <p className="text-xs font-bold text-slate-300 uppercase tracking-wide mb-3">{group}</p>
                   <div className="flex flex-wrap gap-1.5">
@@ -250,7 +251,7 @@ const About = () => {
                       </span>
                     ))}
                   </div>
-                </div>
+                </TiltCard>
               ))}
             </div>
           </Section>
@@ -263,23 +264,24 @@ const About = () => {
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {FEATURES.map(({ icon: Icon, title, desc }) => (
-                <div
+                <TiltCard
                   key={title}
-                  className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5"
+                  maxTilt={5}
+                  className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5"
                 >
                   <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-3">
                     <Icon size={17} className="text-indigo-400" />
                   </div>
                   <p className="text-white font-bold text-sm mb-1.5">{title}</p>
                   <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
-                </div>
+                </TiltCard>
               ))}
             </div>
           </Section>
 
           {/* Who built this */}
           <Section icon={User} eyebrow="The Developer" title="Who built this">
-            <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6 flex items-start gap-4">
+            <TiltCard maxTilt={4} className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-6 flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
                 <User size={18} className="text-emerald-400" />
               </div>
@@ -316,7 +318,7 @@ const About = () => {
                   </a>
                 </div>
               </div>
-            </div>
+            </TiltCard>
           </Section>
 
         </div>

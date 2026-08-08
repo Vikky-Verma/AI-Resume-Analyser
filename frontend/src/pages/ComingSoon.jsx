@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import { Sparkles } from "lucide-react";
+import TiltCard from "../components/effects/TiltCard";
 
 /**
  * Reusable placeholder page for phases that aren't built yet.
@@ -14,11 +15,11 @@ const ComingSoon = ({
   features = [],
 }) => {
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen text-white relative">
       <Navbar />
 
       <div className="max-w-2xl mx-auto px-6 py-24 flex flex-col items-center text-center">
-        <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl flex items-center justify-center mb-6">
+        <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_24px_rgba(99,102,241,0.25)]">
           <Icon size={28} className="text-indigo-400" />
         </div>
 
@@ -32,7 +33,7 @@ const ComingSoon = ({
         <p className="text-slate-400 mb-10 leading-relaxed">{description}</p>
 
         {features.length > 0 && (
-          <div className="w-full bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6 text-left">
+          <TiltCard maxTilt={4} className="w-full bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-6 text-left">
             <p className="text-sm font-semibold text-slate-300 mb-4">
               What's coming
             </p>
@@ -44,7 +45,7 @@ const ComingSoon = ({
                 </li>
               ))}
             </ul>
-          </div>
+          </TiltCard>
         )}
       </div>
     </div>

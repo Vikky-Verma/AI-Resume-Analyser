@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
@@ -23,6 +24,8 @@ import {
   FolderOpen,
   ShieldCheck,
   ArrowRight,
+  Users,
+  Eye,
 } from "lucide-react";
 
 const FEATURES = [
@@ -101,7 +104,7 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { value: 10000, suffix: "+", label: "Resumes Analyzed" },
+  { value: 100, suffix: "+", label: "Resumes Analyzed" },
   { value: 95, suffix: "%", label: "ATS Pass Rate" },
   { value: 6, suffix: "", label: "Score Dimensions" },
   { value: 24, suffix: "/7", label: "AI Availability" },
@@ -129,6 +132,20 @@ const colorClasses = {
 
 const Landing = () => {
   const { user } = useAuth();
+  const [platformStats, setPlatformStats] = useState({ users: 0, visits: 0 });
+
+  useEffect(() => {
+    const apiBase = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+    fetch(`${apiBase}/api/stats/public`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setPlatformStats({ users: data.users ?? 0, visits: data.visits ?? 0 });
+        }
+      })
+      .catch((err) => console.error("Failed to load platform stats:", err));
+  }, []);
 
   return (
     <div className="min-h-screen overflow-hidden">
@@ -293,6 +310,28 @@ const Landing = () => {
             <ArrowRight size={16} />
           </MagneticButton>
         </motion.div>
+      </div>
+
+      {/* Platform stats */}
+      <div className="border-t border-[#1e2233]">
+        <div className="max-w-4xl mx-auto px-6 py-14">
+          <div className="grid grid-cols-2 gap-6 max-w-md mx-auto">
+            <div className="rounded-2xl bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] px-6 py-7 text-center">
+              <Users size={20} className="text-indigo-400 mx-auto mb-2" />
+              <p className="text-3xl sm:text-4xl font-extrabold text-white">
+                <AnimatedCounter value={platformStats.users} suffix="+" />
+              </p>
+              <p className="text-slate-500 text-xs mt-1 font-medium">Active Users</p>
+            </div>
+            <div className="rounded-2xl bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] px-6 py-7 text-center">
+              <Eye size={20} className="text-indigo-400 mx-auto mb-2" />
+              <p className="text-3xl sm:text-4xl font-extrabold text-white">
+                <AnimatedCounter value={platformStats.visits} suffix="+" />
+              </p>
+              <p className="text-slate-500 text-xs mt-1 font-medium">Site Visits</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <Footer />

@@ -23,7 +23,7 @@ const Section = ({
   iconColor = "text-indigo-400",
   children,
 }) => (
-  <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-6 mb-5">
+  <div className="bg-[#1a1d2e]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-6 mb-5">
     <div className="flex items-center gap-3 mb-5">
       <div
         className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center`}

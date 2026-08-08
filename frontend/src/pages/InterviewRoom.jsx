@@ -17,6 +17,7 @@ import {
   Cpu,
   Code2,
 } from "lucide-react";
+import MagneticButton from "../components/effects/MagneticButton";
 
 const ROUND_ICONS = {
   HR: Users,
@@ -289,7 +290,7 @@ const InterviewRoom = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-5">
-          <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6">
+          <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-6">
             <div className="flex items-center justify-between mb-5">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
                 {currentRound.label} — Question {questionIndex + 1} of {currentRound.questions.length}
@@ -337,7 +338,8 @@ const InterviewRoom = () => {
                     {listening ? "Listening..." : "Speak Answer"}
                   </button>
 
-                  <button
+                  <MagneticButton
+                    as="button"
                     onClick={handleSubmit}
                     disabled={submitting}
                     className="flex items-center gap-2 px-5 py-2.5 bg-violet-500 hover:bg-violet-600 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all"
@@ -351,7 +353,7 @@ const InterviewRoom = () => {
                         <Send size={15} /> Submit Answer
                       </>
                     )}
-                  </button>
+                  </MagneticButton>
                 </div>
               </>
             ) : (
@@ -396,7 +398,7 @@ const InterviewRoom = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="bg-[#11151d] border border-[#232838] rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
+            <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
               {camOn ? (
                 <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
               ) : (
@@ -407,7 +409,7 @@ const InterviewRoom = () => {
               )}
             </div>
 
-            <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-4">
+            <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-4">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
                 {currentRound.label}
               </p>

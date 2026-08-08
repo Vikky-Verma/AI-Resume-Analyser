@@ -3,6 +3,8 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 import toast from "react-hot-toast";
 import { MailCheck, Loader2 } from "lucide-react";
+import TiltCard from "../components/effects/TiltCard";
+import MagneticButton from "../components/effects/MagneticButton";
 
 const VerifyOtp = () => {
   const location = useLocation();
@@ -83,13 +85,10 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: "radial-gradient(ellipse at 50% 0%, #1e1b4b 0%, #0f1117 60%)" }}
-    >
+    <div className="min-h-screen flex items-center justify-center px-4 relative">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-sky-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_24px_rgba(99,102,241,0.45)]">
             <MailCheck size={26} className="text-white" />
           </div>
           <h1 className="text-2xl font-extrabold text-white">Check your email</h1>
@@ -98,7 +97,7 @@ const VerifyOtp = () => {
           </p>
         </div>
 
-        <div className="bg-[#1a1d2e] border border-[#2e3150] rounded-2xl p-8">
+        <TiltCard maxTilt={5} className="bg-[#1a1d2e]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="flex justify-between gap-2" onPaste={handlePaste}>
               {digits.map((d, idx) => (
@@ -116,7 +115,8 @@ const VerifyOtp = () => {
               ))}
             </div>
 
-            <button
+            <MagneticButton
+              as="button"
               type="submit"
               disabled={loading}
               className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all"
@@ -128,7 +128,7 @@ const VerifyOtp = () => {
               ) : (
                 "Verify Email"
               )}
-            </button>
+            </MagneticButton>
           </form>
 
           <div className="text-center mt-5">
@@ -144,7 +144,7 @@ const VerifyOtp = () => {
               </button>
             )}
           </div>
-        </div>
+        </TiltCard>
 
         <p className="text-center mt-5 text-sm text-slate-400">
           Wrong email?{" "}

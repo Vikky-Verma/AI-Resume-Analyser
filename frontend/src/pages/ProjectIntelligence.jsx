@@ -17,6 +17,7 @@ import {
   Target,
   Layers,
 } from "lucide-react";
+import MagneticButton from "../components/effects/MagneticButton";
 
 const MAX_FILE_MB = 5;
 
@@ -165,8 +166,6 @@ const ProjectIntelligence = () => {
     <div className="min-h-screen relative overflow-hidden">
       {!result && (
         <>
-          <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-indigo-600/15 rounded-full blur-[120px]" />
-          <div className="pointer-events-none absolute top-40 -right-32 w-[28rem] h-[28rem] bg-violet-500/15 rounded-full blur-[120px]" />
         </>
       )}
 
@@ -175,7 +174,7 @@ const ProjectIntelligence = () => {
         {!result ? (
           analyzing ? (
             <div className="max-w-2xl mx-auto px-6 py-16">
-              <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-10">
+              <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-10">
                 <div className="flex flex-col gap-4">
                   {STEPS.map((label, i) => (
                     <div key={i} className="flex items-center gap-3">
@@ -236,7 +235,7 @@ const ProjectIntelligence = () => {
                   </p>
 
                   {/* Live-preview mockup */}
-                  <div className="mt-9 bg-[#12141a] border border-[#22262f] rounded-2xl p-5 max-w-md">
+                  <div className="mt-9 bg-[#12141a]/80 backdrop-blur-xl border border-[#22262f] rounded-2xl p-5 max-w-md">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-white font-bold text-sm">ResQLink</span>
                       <div className="flex gap-1">
@@ -418,7 +417,8 @@ const ProjectIntelligence = () => {
                         </div>
                       )}
 
-                      <button
+                      <MagneticButton
+                        as="button"
                         type="button"
                         onClick={handleAnalyze}
                         disabled={analyzing || (useExisting ? !selectedResumeId : !file)}
@@ -434,7 +434,7 @@ const ProjectIntelligence = () => {
                             Analyze Projects <ArrowRight size={16} />
                           </>
                         )}
-                      </button>
+                      </MagneticButton>
                     </div>
                   </div>
                 </div>
@@ -444,7 +444,7 @@ const ProjectIntelligence = () => {
         ) : (
           <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
             {/* Header */}
-            <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6">
+            <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-6">
               <div className="flex items-center gap-2">
                 <FolderGit2 size={18} className="text-indigo-400" />
                 <h1 className="text-white font-extrabold text-xl">
@@ -556,7 +556,7 @@ const ProjectIntelligence = () => {
 
             {/* Overall Project Suggestions */}
             {result.overallProjectSuggestions?.length > 0 && (
-              <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6">
+              <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Lightbulb size={15} className="text-amber-400" />
                   <h2 className="text-white font-bold text-sm">

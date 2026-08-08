@@ -99,8 +99,6 @@ const Progress = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="pointer-events-none fixed -top-40 -left-40 w-[32rem] h-[32rem] bg-indigo-500/10 rounded-full blur-[120px]" />
-      <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-amber-500/10 rounded-full blur-[120px]" />
 
       <div className="relative">
 
@@ -137,7 +135,7 @@ const Progress = () => {
             <>
               {/* Streak + weekly activity */}
               <div className="mt-8 grid md:grid-cols-3 gap-4">
-                <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6 flex flex-col justify-center items-center text-center">
+                <div className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-6 flex flex-col justify-center items-center text-center">
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center mb-3">
                     <Flame size={22} className="text-orange-400" />
                   </div>
@@ -152,7 +150,7 @@ const Progress = () => {
                   </p>
                 </div>
 
-                <div className="md:col-span-2 bg-[#171a2c] border border-[#2e3150] rounded-2xl p-6">
+                <div className="md:col-span-2 bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-6">
                   <p className="text-sm font-semibold text-slate-300 mb-4">
                     Last 7 days
                   </p>
@@ -169,7 +167,7 @@ const Progress = () => {
                 {MODULE_CARDS.map(({ key, label, icon: Icon, color }) => (
                   <div
                     key={key}
-                    className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5"
+                    className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5"
                   >
                     <div
                       className={`w-9 h-9 rounded-xl border flex items-center justify-center mb-3 ${COLOR_CLASSES[color]}`}

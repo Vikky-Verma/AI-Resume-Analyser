@@ -18,6 +18,7 @@ import {
   FileText,
   X,
 } from "lucide-react";
+import MagneticButton from "../components/effects/MagneticButton";
 
 const LEVELS = [
   { key: "Fresher", desc: "0 years — campus / first job" },
@@ -246,8 +247,6 @@ const MockInterviewSetup = () => {
     <div className="min-h-screen relative overflow-hidden">
       {isLanding && (
         <>
-          <div className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-violet-600/15 rounded-full blur-[120px]" />
-          <div className="pointer-events-none absolute top-40 -right-32 w-[28rem] h-[28rem] bg-indigo-500/15 rounded-full blur-[120px]" />
         </>
       )}
 
@@ -281,7 +280,7 @@ const MockInterviewSetup = () => {
                 </p>
 
                 {/* Live-preview mockup */}
-                <div className="mt-9 bg-[#12141a] border border-[#22262f] rounded-2xl p-5 max-w-md">
+                <div className="mt-9 bg-[#12141a]/80 backdrop-blur-xl border border-[#22262f] rounded-2xl p-5 max-w-md">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[11px] text-slate-500 font-medium">
                       Technical Round · Q3 of 5
@@ -685,12 +684,13 @@ const MockInterviewSetup = () => {
                       </div>
                     </div>
 
-                    <button
+                    <MagneticButton
+                      as="button"
                       type="submit"
                       className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-violet-500 hover:bg-violet-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-all"
                     >
                       <Sparkles size={16} /> Generate Interview <ChevronRight size={16} />
-                    </button>
+                    </MagneticButton>
                   </div>
                 </div>
               </form>

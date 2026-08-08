@@ -12,6 +12,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import TiltCard from "../components/effects/TiltCard";
+import MagneticButton from "../components/effects/MagneticButton";
 
 const timeAgo = (dateStr) => {
   const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -130,7 +132,7 @@ const PostCard = ({ post, onLike, onDelete }) => {
   const [commentCount, setCommentCount] = useState(post.commentCount);
 
   return (
-    <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5">
+    <div className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5">
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="text-sm font-semibold text-white">{post.author.name}</p>
@@ -250,10 +252,7 @@ const Community = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="pointer-events-none fixed -top-40 -left-40 w-[32rem] h-[32rem] bg-emerald-500/10 rounded-full blur-[120px]" />
-      <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-indigo-500/10 rounded-full blur-[120px]" />
-
+    <div className="min-h-screen relative">
       <div className="relative">
 
         <div className="max-w-2xl mx-auto px-6 py-12">
@@ -272,7 +271,7 @@ const Community = () => {
 
           <form
             onSubmit={submitPost}
-            className="mt-8 bg-[#171a2c] border border-[#2e3150] rounded-2xl p-4"
+            className="mt-8 bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-4"
           >
             <textarea
               value={draft}
@@ -283,14 +282,15 @@ const Community = () => {
               className="w-full bg-[#0f1120] border border-[#2e3150] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 resize-none"
             />
             <div className="flex justify-end mt-3">
-              <button
+              <MagneticButton
+                as="button"
                 type="submit"
                 disabled={posting || !draft.trim()}
                 className="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white text-xs font-semibold rounded-xl transition-colors"
               >
                 {posting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                 {posting ? "Posting…" : "Post"}
-              </button>
+              </MagneticButton>
             </div>
           </form>
 

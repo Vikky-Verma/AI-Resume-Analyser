@@ -69,7 +69,7 @@ const TagInput = ({ tags, onChange, placeholder }) => {
 };
 
 const ProjectEditor = ({ project, index, onChange, onRemove }) => (
-  <div className="bg-[#12141c] border border-[#20222c] rounded-xl p-4 space-y-3">
+  <div className="bg-[#12141c]/80 backdrop-blur-xl border border-[#20222c] rounded-xl p-4 space-y-3">
     <div className="flex items-center justify-between">
       <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
         Project {index + 1}

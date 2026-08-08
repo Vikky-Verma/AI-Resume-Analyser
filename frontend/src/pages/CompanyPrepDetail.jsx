@@ -221,7 +221,6 @@ const CompanyPrepDetail = () => {
 
   return (
     <div className="min-h-screen">
-
       <div className="max-w-5xl mx-auto px-6 py-10">
         <Link
           to="/company-prep"
@@ -342,7 +341,7 @@ const CompanyPrepDetail = () => {
 
           {/* Right: sidebar stats */}
           <div className="space-y-5">
-            <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5">
+            <div className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5">
               <p className="text-sm font-semibold text-white mb-4">
                 Difficulty breakdown
               </p>
@@ -369,7 +368,7 @@ const CompanyPrepDetail = () => {
             </div>
 
             {company.topicBreakdown?.length > 0 && (
-              <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5">
+              <div className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Tag size={14} className="text-indigo-400" />
                   <p className="text-sm font-semibold text-white">
@@ -393,7 +392,7 @@ const CompanyPrepDetail = () => {
             )}
 
             {company.roadmap?.length > 0 && (
-              <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5">
+              <div className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Map size={14} className="text-amber-400" />
                   <p className="text-sm font-semibold text-white">

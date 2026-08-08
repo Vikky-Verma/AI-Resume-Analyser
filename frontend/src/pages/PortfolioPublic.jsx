@@ -158,7 +158,7 @@ const PortfolioPublic = () => {
               {portfolio.projects.map((project, idx) => (
                 <div
                   key={idx}
-                  className="bg-[#12141c] border border-[#20222c] rounded-xl p-4"
+                  className="bg-[#12141c]/80 backdrop-blur-xl border border-[#20222c] rounded-xl p-4"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-white font-semibold text-sm">{project.name}</p>

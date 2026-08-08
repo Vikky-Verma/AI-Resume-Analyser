@@ -3,6 +3,8 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+import CosmicBackground from "./components/effects/CosmicBackground";
+import CursorGlow from "./components/effects/CursorGlow";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -33,6 +35,8 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <CosmicBackground />
+        <CursorGlow />
         <Toaster
           position="top-right"
           toastOptions={{

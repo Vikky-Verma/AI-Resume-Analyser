@@ -15,6 +15,7 @@ import {
   Trophy,
   Clock,
 } from "lucide-react";
+import MagneticButton from "../components/effects/MagneticButton";
 
 const COLUMNS = [
   { key: "applied", label: "Applied", accent: "#64748b" },
@@ -166,7 +167,7 @@ const ApplicationModal = ({ initial, onClose, onSave, onDelete }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="w-full max-w-md bg-[#0e0f16] border border-[#20222c] rounded-2xl">
+      <div className="w-full max-w-md bg-[#0e0f16]/80 backdrop-blur-xl border border-[#20222c] rounded-2xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#1c1e28]">
           <h2 className="text-[15px] font-semibold text-white">
             {isEdit ? "Edit application" : "New application"}
@@ -238,14 +239,15 @@ const ApplicationModal = ({ initial, onClose, onSave, onDelete }) => {
           </div>
 
           <div className="flex items-center gap-2 pt-1">
-            <button
+            <MagneticButton
+              as="button"
               type="submit"
               disabled={saving}
               className="flex-1 flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-sm rounded-lg py-2.5 transition-colors disabled:opacity-60"
             >
               {saving && <Loader2 size={14} className="animate-spin" />}
               {isEdit ? "Save changes" : "Add application"}
-            </button>
+            </MagneticButton>
             {isEdit && (
               <button
                 type="button"

@@ -46,7 +46,7 @@ const CompanyCard = ({ company, solved }) => {
   return (
     <Link
       to={`/company-prep/${company.slug}`}
-      className="group relative bg-[#171a2c] border border-[#2e3150] hover:border-indigo-500/40 rounded-2xl p-5 transition-all hover:-translate-y-0.5"
+      className="group relative bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] hover:border-indigo-500/40 rounded-2xl p-5 transition-all hover:-translate-y-0.5"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
@@ -160,8 +160,6 @@ const CompanyPrep = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="pointer-events-none fixed -top-40 -left-40 w-[32rem] h-[32rem] bg-indigo-500/10 rounded-full blur-[120px]" />
-      <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-amber-500/10 rounded-full blur-[120px]" />
 
       <div className="relative">
 

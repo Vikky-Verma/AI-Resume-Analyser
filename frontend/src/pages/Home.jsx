@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import API from "../api/axios";
 import StreakCalendar from "../components/StreakCalendar";
 import { useAuth } from "../context/AuthContext";
+import TiltCard from "../components/effects/TiltCard";
+import MagneticButton from "../components/effects/MagneticButton";
 import {
   Flame,
   Mic,
@@ -107,10 +109,7 @@ const Home = () => {
   const firstName = (user?.name || "there").split(" ")[0];
 
   return (
-    <div className="min-h-screen">
-      <div className="pointer-events-none fixed -top-40 -left-40 w-[32rem] h-[32rem] bg-indigo-500/10 rounded-full blur-[120px]" />
-      <div className="pointer-events-none fixed top-40 -right-32 w-[28rem] h-[28rem] bg-orange-500/10 rounded-full blur-[120px]" />
-
+    <div className="min-h-screen relative">
       <div className="relative">
 
         <div className="max-w-5xl mx-auto px-6 py-12">
@@ -137,10 +136,12 @@ const Home = () => {
           {/* Quick launch */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {QUICK_LINKS.map(({ to, icon: Icon, color, title, desc }) => (
-              <Link
+              <MagneticButton
+                as={Link}
                 key={to}
                 to={to}
-                className="group bg-[#171a2c] border border-[#2e3150] hover:border-indigo-500/40 rounded-2xl p-5 transition-all hover:-translate-y-0.5"
+                strength={8}
+                className="group bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] hover:border-indigo-500/40 rounded-2xl p-5 transition-colors block text-left"
               >
                 <div
                   className={`w-9 h-9 rounded-xl border flex items-center justify-center mb-3 ${QUICK_COLOR[color]}`}
@@ -155,7 +156,7 @@ const Home = () => {
                   />
                 </p>
                 <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
-              </Link>
+              </MagneticButton>
             ))}
           </div>
 
@@ -168,9 +169,10 @@ const Home = () => {
               </div>
               <div className="flex flex-col gap-3">
                 {UPDATES.map((u, i) => (
-                  <div
+                  <TiltCard
                     key={i}
-                    className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-4"
+                    maxTilt={4}
+                    className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-4"
                   >
                     <span
                       className={`inline-block text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-full border mb-2 ${UPDATE_COLOR[u.color]}`}
@@ -184,7 +186,7 @@ const Home = () => {
                       {u.body}
                     </p>
                     <p className="text-[11px] text-slate-600 mt-2">{u.time}</p>
-                  </div>
+                  </TiltCard>
                 ))}
               </div>
             </div>
@@ -197,36 +199,36 @@ const Home = () => {
               </div>
 
               {loading ? (
-                <div className="flex items-center justify-center py-24 bg-[#171a2c] border border-[#2e3150] rounded-2xl">
+                <div className="flex items-center justify-center py-24 bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl">
                   <Loader2 size={22} className="text-indigo-400 animate-spin" />
                 </div>
               ) : !data ? (
-                <div className="flex items-center justify-center py-24 bg-[#171a2c] border border-[#2e3150] rounded-2xl">
+                <div className="flex items-center justify-center py-24 bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl">
                   <p className="text-slate-400 text-sm">Couldn't load your streak.</p>
                 </div>
               ) : (
                 <>
                   <div className="grid grid-cols-3 gap-3 mb-4">
-                    <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-4">
+                    <TiltCard maxTilt={4} className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-4">
                       <p className="text-[11px] text-slate-500 mb-1">Current streak</p>
                       <p className="text-2xl font-extrabold text-white">
                         {data.streak.current}
                       </p>
-                    </div>
-                    <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-4">
+                    </TiltCard>
+                    <TiltCard maxTilt={4} className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-4">
                       <p className="text-[11px] text-slate-500 mb-1">Longest streak</p>
                       <p className="text-2xl font-extrabold text-white">
                         {data.streak.longest}
                       </p>
-                    </div>
-                    <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-4">
+                    </TiltCard>
+                    <TiltCard maxTilt={4} className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-4">
                       <p className="text-[11px] text-slate-500 mb-1">Active days</p>
                       <p className="text-2xl font-extrabold text-white">
                         {data.totalActivityDays}
                       </p>
-                    </div>
+                    </TiltCard>
                   </div>
-                  <div className="bg-[#171a2c] border border-[#2e3150] rounded-2xl p-5">
+                  <div className="bg-[#171a2c]/80 backdrop-blur-xl border border-[#2e3150] rounded-2xl p-5">
                     <StreakCalendar calendarActivity={data.calendarActivity} />
                   </div>
                 </>

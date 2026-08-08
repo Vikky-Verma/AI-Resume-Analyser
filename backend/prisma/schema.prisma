@@ -247,3 +247,8 @@ model MockInterview {
   createdAt       DateTime  @default(now())
   completedAt     DateTime?
 }
+
+model SiteStats {
+  id          String @id @default("global")
+  visitCount  Int    @default(0)
+}

@@ -96,7 +96,7 @@ const InterviewReport = () => {
         </div>
 
         {interview.overallFeedback && (
-          <div className="bg-[#11151d] border border-[#232838] rounded-2xl p-6 mb-6">
+          <div className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl p-6 mb-6">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
               Panel Feedback
             </p>
@@ -111,7 +111,7 @@ const InterviewReport = () => {
             return (
               <div
                 key={round.type}
-                className="bg-[#11151d] border border-[#232838] rounded-2xl overflow-hidden"
+                className="bg-[#11151d]/80 backdrop-blur-xl border border-[#232838] rounded-2xl overflow-hidden"
               >
                 <button
                   onClick={() => setOpenRound(isOpen ? -1 : ri)}

@@ -135,9 +135,9 @@ const Landing = () => {
   const [platformStats, setPlatformStats] = useState({ users: 0, visits: 0 });
 
   useEffect(() => {
-    const apiBase = import.meta.env.VITE_API_URL || "http://localhost:5000";
+    const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-    fetch(`${apiBase}/api/stats/public`)
+    fetch(`${apiBase}/stats/public`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {

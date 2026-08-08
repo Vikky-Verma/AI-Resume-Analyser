@@ -22,6 +22,7 @@ const progressRoutes = require("./routes/progressRoutes");
 const pdfRoutes = require("./routes/pdfRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const contactRoutes = require("./routes/contactRoutes");
+const statsRoutes = require("./routes/statsRoutes");
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use("/api/report", pdfRoutes);
 app.use("/api/interview", interviewRoutes);
 app.use("/api/community", communityRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/stats", statsRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 AI Resume Analyzer Backend Running");
